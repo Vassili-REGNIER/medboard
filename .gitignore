@@ -1,7 +1,14 @@
-# Ne versionne pas tout le home
+# Ignore tout par défaut
 *
 
-# Versionne uniquement www et private
+# Ré-autorise www et private et tout ce qu'ils contiennent
 !www/
+!www/**
 !private/
+!private/**
+
+# Toujours versionner le .gitignore
 !.gitignore
+
+# Autres fichiers a versionner
+!README.md
