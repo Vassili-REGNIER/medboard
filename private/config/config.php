@@ -1,7 +1,7 @@
 <?php
-define("DB_HOST", "postgresql-medboard.alwaysdata.net");
-define("DB_USER", "medboard");
-define("DB_PASS", "lazone3954*!");
-define("DB_NAME", "medboard_database");
-define("DB_CHARSET", "utf8mb4");
+define("DB_HOST", "host.example.com");
+define("DB_USER", "username");
+define("DB_PASS", "password");
+define("DB_NAME", "database_name");
+define("DB_CHARSET", "charset_name");
 ?>
