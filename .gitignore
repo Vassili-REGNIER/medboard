@@ -10,5 +10,8 @@
 # Toujours versionner le .gitignore
 !.gitignore
 
-# Autres fichiers a versionner
+# Autres fichiers à versionner
 !README.md
+
+# Exclure le fichier de config sensible
+private/config/config.php
