@@ -1,0 +1,7 @@
+# Ne versionne pas tout le home
+*
+
+# Versionne uniquement www et private
+!www/
+!private/
+!.gitignore
