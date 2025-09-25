@@ -15,3 +15,4 @@
 
 # Exclure le fichier de config sensible
 private/config/config.php
+private/config/config.example.php
