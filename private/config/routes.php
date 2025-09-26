@@ -4,15 +4,15 @@ declare(strict_types=1);
 
 return [
     // Pages publiques
-    'site/home'    => ['modules\\Site\\Controllers\\HomeController',   'index',   false],
-    'site/sitemap' => ['modules\\Site\\Controllers\\StaticController', 'sitemap', false],
-    'site/legal'   => ['modules\\Site\\Controllers\\StaticController', 'legal',   false],
+    'site/home'    => ['modules\\Controllers\\HomeController',   'index',   false],
+    'site/sitemap' => ['modules\\Controllers\\StaticController', 'sitemap', false],
+    'site/legal'   => ['modules\\Controllers\\StaticController', 'legal',   false],
 
     // Auth
-    'auth/login'    => ['modules\\Auth\\Controllers\\AuthController', 'login',    false],
-    'auth/register' => ['modules\\Auth\\Controllers\\AuthController', 'register', false],
-    'auth/logout'   => ['modules\\Auth\\Controllers\\AuthController', 'logout',   true],
+    'auth/login'    => ['modules\\Controllers\\AuthController', 'login',    false],
+    'auth/register' => ['modules\\Controllers\\AuthController', 'register', false],
+    'auth/logout'   => ['modules\\Controllers\\AuthController', 'logout',   true],
 
     // Espace protégé
-    'dashboard/index' => ['modules\\Dashboard\\Controllers\\DashboardController', 'index', true],
+    'dashboard/index' => ['modules\\Controllers\\DashboardController', 'index', true],
 ];

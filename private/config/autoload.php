@@ -1,30 +1,32 @@
 <?php
-// private/config/autoload.php
+// private/config/autoloader.php
 declare(strict_types=1);
 
-// S'assurer que MODULES_PATH est défini (via config.php)
-if (!defined('MODULES_PATH')) {
-    throw new RuntimeException('MODULES_PATH is not defined. Load config.php first.');
-}
+/**
+ * Autoloader PSR-4 minimaliste
+ *
+ * Exemple : "modules\Controllers\HomeController"
+ * sera recherché dans : MODULES_PATH . "/Controllers/HomeController.php"
+ */
 
 spl_autoload_register(function (string $class): void {
-    // On accepte les deux notations par tolérance
-    static $prefixes = ['modules\\', 'Modules\\'];
+    // On ne traite que les classes qui commencent par "modules\"
+    $prefix = 'modules\\';
+    $baseDir = MODULES_PATH; // Défini dans config.php, ex: __DIR__ . '/../modules/'
 
-    foreach ($prefixes as $prefix) {
-        $len = strlen($prefix);
-        if (strncmp($class, $prefix, $len) !== 0) {
-            continue;
-        }
-
-        // Chemin relatif après le préfixe
-        $relative = substr($class, $len); // ex: "Site\Controllers\HomeController"
-        $path = MODULES_PATH . '/' . str_replace('\\', '/', $relative) . '.php';
-
-        if (is_file($path)) {
-            require $path;
-            return;
-        }
+    // Si la classe n'utilise pas ce préfixe, on ignore
+    if (strncmp($prefix, $class, strlen($prefix)) !== 0) {
+        return;
     }
-    // Laisser d'autres autoloaders tenter leur chance si présents
+
+    // Supprimer le préfixe "modules\"
+    $relativeClass = substr($class, strlen($prefix));
+
+    // Transformer les "\" en "/" pour obtenir un chemin de fichier
+    $file = $baseDir . str_replace('\\', DIRECTORY_SEPARATOR, $relativeClass) . '.php';
+
+    // Inclure le fichier si trouvé
+    if (is_file($file)) {
+        require $file;
+    }
 });

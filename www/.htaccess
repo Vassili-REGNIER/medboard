@@ -1,0 +1,16 @@
+# Active la réécriture d'URL
+RewriteEngine On
+
+# Ne pas réécrire si le fichier/dossier existe déjà
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+
+# Tout router vers index.php en passant la route "capturée"
+# Exemples :
+#   /site/home          -> index.php?route=site/home
+#   /auth/login         -> index.php?route=auth/login
+#   /dashboard/index    -> index.php?route=dashboard/index
+RewriteRule ^(.+)$ index.php?route=$1 [L,QSA]
+
+# Optionnel : laisser la racine aller vers index.php sans param -> route par défaut "site/home"
+DirectoryIndex index.php
