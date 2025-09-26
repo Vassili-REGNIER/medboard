@@ -1,9 +1,7 @@
 <?php
 
 // Chemins de base
-define('BASE_PATH', dirname(__DIR__));
-define('MODULES_PATH', BASE_PATH . '/private/modules');
-
+define('MODULES_PATH', __DIR__ . '/../modules');
 
 // Config de connexion DB (exemple)
 define("DB_HOST", "host.example.com");

@@ -9,6 +9,6 @@ final class HomeController
     public function index(array $req): void
     {
         // Ici on charge simplement la vue d'accueil
-        require __DIR__ . '/../../views/home.php';
+        require __DIR__ . '/../views/home.php';
     }
 }
