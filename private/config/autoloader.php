@@ -25,10 +25,12 @@ spl_autoload_register(function (string $class): void {
     // Transformer les "\" en "/" pour obtenir un chemin de fichier
     $file = $baseDir . str_replace('\\', DIRECTORY_SEPARATOR, $relativeClass) . '.php';
     
+    /* Debug statement
     echo'$baseDir='. $baseDir .'<br>';
     echo'$class='. $class .'<br>';
     echo'$file='. $file .'<br>';
-    
+    */
+
     // Inclure le fichier si trouvé
     if (file_exists($file)) {
         require $file;

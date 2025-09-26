@@ -1,7 +1,7 @@
 <?php
 
 // Chemins de base
-define('MODULES_PATH', dirname(__DIR__) . '/modules');
+define('MODULES_PATH', dirname(__DIR__) . '/modules/');
 
 // Config de connexion DB (exemple)
 define("DB_HOST", "host.example.com");
