@@ -9,7 +9,7 @@ session_start();
  * config générale (définit notamment MODULES_PATH, BASE_URL éventuelle),
  * et table des routes.
  */
-require __DIR__ . '/_assets/includes/autoloader.php';
+require __DIR__ . '/../private/config/autoloader.php';
 require __DIR__ . '/../private/config/config.php';
 $routes = require __DIR__ . '/../private/config/routes.php';
 
