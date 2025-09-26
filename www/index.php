@@ -2,8 +2,6 @@
 // medboard/index.php — Front Controller
 declare(strict_types=1);
 
-use modules\controllers\HomeController;
-
 session_start();
 
 /**
@@ -59,10 +57,8 @@ try {
         exit;
     }
 
-    //$controller = new $class();
-    require HomeController::class;
-    $controller = new HomeController();
-    
+    $controller = new $class();
+
     if (!is_callable([$controller, $method])) {
         http_response_code(500);
         echo '500 — Méthode introuvable : ' . htmlspecialchars($class . '::' . $method, ENT_QUOTES, 'UTF-8');

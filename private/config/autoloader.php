@@ -24,9 +24,11 @@ spl_autoload_register(function (string $class): void {
 
     // Transformer les "\" en "/" pour obtenir un chemin de fichier
     $file = $baseDir . str_replace('\\', DIRECTORY_SEPARATOR, $relativeClass) . '.php';
-
+    
+    echo''. $file .'';
+    
     // Inclure le fichier si trouvé
-    if (is_file($file)) {
+    if (file_exists($file)) {
         require $file;
     }
 });
