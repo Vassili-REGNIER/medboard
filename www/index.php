@@ -2,6 +2,8 @@
 // medboard/index.php — Front Controller
 declare(strict_types=1);
 
+use modules\controllers\HomeController;
+
 session_start();
 
 /**
@@ -9,8 +11,8 @@ session_start();
  * config générale (définit notamment MODULES_PATH, BASE_URL éventuelle),
  * et table des routes.
  */
-require __DIR__ . '/../private/config/autoloader.php';
 require __DIR__ . '/../private/config/config.php';
+require __DIR__ . '/../private/config/autoloader.php';
 $routes = require __DIR__ . '/../private/config/routes.php';
 
 /** ==================== Helpers auth & nav ==================== */
@@ -57,8 +59,10 @@ try {
         exit;
     }
 
-    $controller = new $class();
-
+    //$controller = new $class();
+    require HomeController::class;
+    $controller = new HomeController();
+    
     if (!is_callable([$controller, $method])) {
         http_response_code(500);
         echo '500 — Méthode introuvable : ' . htmlspecialchars($class . '::' . $method, ENT_QUOTES, 'UTF-8');
