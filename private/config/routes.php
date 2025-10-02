@@ -10,7 +10,7 @@ return [
 
     // Auth
     'auth/login'    => ['modules\\controllers\\AuthController', 'login',    false],
-    'auth/register' => ['modules\\controllers\\AuthController', 'register', false],
+    'auth/register' => ['modules\\controllers\\HomeController', 'register', false],
     'auth/logout'   => ['modules\\controllers\\AuthController', 'logout',   true],
 
     // Espace protégé
