@@ -57,7 +57,7 @@ final class AuthController
             session_regenerate_id(true);
 
             $_SESSION['user'] = [
-                'user_id'        => (int)$user['id'],
+                'user_id'        => (int)$user['user_id'],
                 'firstname'      => $user['firstname'] ?? null,
                 'lastname'       => $user['lastname'] ?? null,
                 'username'       => $user['username'] ?? null,
@@ -205,7 +205,7 @@ final class AuthController
                 'firstname'      => $firstname,
                 'lastname'       => $lastname,
                 'username'       => $username,
-                'password_hash'  => password_hash($password, PASSWORD_DEFAULT),
+                'password_hash'  => password_hash($password, PASSWORD_ARGON2ID),
                 'email'          => $email,
                 'specialization' => $specialization,
             ]);
