@@ -9,9 +9,10 @@ return [
     'site/legal'   => ['StaticController', 'legal',   false],
 
     // Auth
-    'auth/login'    => ['AuthController', 'login',    false],
-    'auth/register' => ['AuthController', 'register', false],
-    'auth/logout'   => ['AuthController', 'logout',   true],
+    'auth/login'           => ['AuthController', 'login',                     false],
+    'auth/register'        => ['AuthController', 'register',                  false],
+    'auth/register/submit' => ['AuthController', 'handleRegisterAndRedirect', false],
+    'auth/logout'          => ['AuthController', 'logout',                    true],
 
     // Espace protégé
     'dashboard/index' => ['DashboardController', 'index', true],

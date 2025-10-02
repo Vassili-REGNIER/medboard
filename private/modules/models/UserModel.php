@@ -48,4 +48,51 @@ final class UserModel
         $upd = $this->pdo->prepare("UPDATE users SET password_hash = :h WHERE id = :id");
         $upd->execute([':h' => $newHash, ':id' => $userId]);
     }
+
+    /**
+     * Vérifie si un username existe déjà.
+     */
+    public function isUsernameTaken(string $username): bool
+    {
+        $sql = 'SELECT 1 FROM users WHERE username = :u LIMIT 1';
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute([':u' => $username]);
+        return (bool) $stmt->fetchColumn();
+    }
+
+    /**
+     * Vérifie si un email existe déjà.
+     */
+    public function isEmailTaken(string $email): bool
+    {
+        $sql = 'SELECT 1 FROM users WHERE email = :e LIMIT 1';
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute([':e' => $email]);
+        return (bool) $stmt->fetchColumn();
+    }
+
+    /**
+     * Crée l’utilisateur et renvoie son user_id (int/uuid selon ton schéma).
+     * Laisse remonter PDOException (codes SQLSTATE) pour que le contrôleur décide quoi afficher.
+     */
+    public function createUser(array $data)
+    {
+        $sql = <<<SQL
+            INSERT INTO users (firstname, lastname, username, password_hash, email, specialization)
+            VALUES (:firstname, :lastname, :username, :password_hash, :email, :specialization)
+            RETURNING user_id
+        SQL;
+
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute([
+            ':firstname'      => $data['firstname'],
+            ':lastname'       => $data['lastname'],
+            ':username'       => $data['username'],
+            ':password_hash'  => $data['password_hash'],
+            ':email'          => $data['email'],
+            ':specialization' => $data['specialization'],
+        ]);
+
+        return $stmt->fetchColumn(); // user_id
+    }
 }
