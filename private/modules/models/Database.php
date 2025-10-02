@@ -36,7 +36,7 @@ final class Database
         $options = $options + $defaultOptions;
 
         // Connexion paresseuse: on ne tente la connexion que maintenant
-        $dsn = sprintf('mysql:host=%s;dbname=%s', $host, $dbName);
+        $dsn = sprintf('pgsql:host=%s;dbname=%s;charset=%s', $host, $dbName, $charset);
 
         try {
             $this->pdo = new PDO($dsn, $user, $pass, $options);
