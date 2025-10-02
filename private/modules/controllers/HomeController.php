@@ -1,6 +1,4 @@
 <?php
-namespace modules\controllers;
-
 final class HomeController
 {
     /**
