@@ -11,8 +11,22 @@ session_start();
  */
 require __DIR__ . '/../private/config/config.php';
 require __DIR__ . '/../private/config/autoloader.php';
-require BASE_PATH . '/private/utils/helpers.php';
 $routes = require __DIR__ . '/../private/config/routes.php';
+
+/** ==================== Helpers auth & nav ==================== */
+function redirect(string $url): never {
+    header('Location: ' . $url, true, 302);
+    exit;
+}
+function isLoggedIn(): bool {
+    return !empty($_SESSION['user_id']);
+}
+function guardAuth(): void {
+    if (!isLoggedIn()) {
+        // Adapte le chemin si besoin (ex: BASE_URL . '/auth/login')
+        redirect('/auth/login');
+    }
+}
 
 /** ==================== Résolution de la route ====================
  * L'.htaccess doit réécrire /site/home -> index.php?route=site/home
@@ -36,7 +50,7 @@ if ($requiresAuth === true) {
 
 /** ==================== Instanciation & exécution ==================== */
 try {
-    // Le namespace "modules\" est autoloadé : pas de require manuel.
+    // Chargement automatique via autoloader (sans namespace).
     if (!class_exists($class)) {
         http_response_code(500);
         echo '500 — Classe contrôleur introuvable : ' . htmlspecialchars($class, ENT_QUOTES, 'UTF-8');
