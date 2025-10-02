@@ -13,12 +13,21 @@ final class AuthController
         $this->users = new UserModel();
     }
 
+    public function register(): void
+    {
+        require __DIR__ . '/views/register.php';
+    }
+
+    public function login() {
+        require __DIR__ . '/views/login.php';
+    }
+
     /**
      * Tente la connexion via un login (email OU username) + mot de passe.
      * Si succès: ouvre la session et REDIRIGE vers l'accueil connecté ('/').
      * Si échec: retourne un tableau d'erreurs (et ne redirige pas).
      */
-    public function loginAndRedirect(?string $login, ?string $password): array
+    public function handleLoginAndRedirect(?string $login, ?string $password): array
     {
         $errors = [];
 
@@ -71,7 +80,7 @@ final class AuthController
         return $errors;
     }
 
-    public function logoutAndRedirect(): void
+    public function handleLogoutAndRedirect(): void
     {
         $this->ensureSession();
 
