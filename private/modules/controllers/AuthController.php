@@ -12,11 +12,11 @@ final class AuthController
 
     public function register(): void
     {
-        require __DIR__ . '/views/register.php';
+        require dirname(__DIR__) . '/views/register.php';
     }
 
     public function login() {
-        require __DIR__ . '/views/login.php';
+        require dirname(__DIR__) . '/views/login.php';
     }
 
     /**
