@@ -11,7 +11,6 @@ spl_autoload_register(function (string $class): void {
 
     foreach ($paths as $file) {
         if (is_file($file)) {
-            echo''. $file . PHP_EOL;
             require $file;
             return;
         }
