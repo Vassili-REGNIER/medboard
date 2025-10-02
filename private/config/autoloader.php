@@ -8,8 +8,10 @@ spl_autoload_register(function (string $class): void {
         $baseDir . 'models' . DIRECTORY_SEPARATOR . $class . '.php',
     ];
 
+
     foreach ($paths as $file) {
         if (is_file($file)) {
+            echo''. $file . PHP_EOL;
             require $file;
             return;
         }
