@@ -2,6 +2,7 @@
 
 // Chemins de base
 define('MODULES_PATH', dirname(__DIR__) . '/modules/');
+define('BASE_PATH', dirname(__DIR__, 2));
 
 // Config de connexion DB (exemple)
 define("DB_HOST", "host.example.com");
