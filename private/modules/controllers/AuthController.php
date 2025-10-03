@@ -240,22 +240,41 @@ final class AuthController
             $errors[] = 'Format d’email invalide.';
         }
 
-        // Spécialisation : lookup table (exactement comme la FK)
+        // Spécialisation : on attend un ID (ou vide), on vérifie l'existence via SpecializationModel
         $specializationId = null;
-        if ($specName !== '') {
-            try {
-                // Méthode à implémenter dans ton modèle si nécessaire.
-                $specializationId = $this->userModel->getSpecializationIdByName($specName); // retourne ?int
-                if ($specializationId === null) {
-                    $errors[] = 'Spécialisation invalide.';
-                }
-            } catch (Throwable $e) {
-                error_log('[Register] specialization lookup error: ' . $e->getMessage());
-                $errors[] = 'Erreur interne sur la spécialisation.';
-            }
-        } else {
-            // Dans le schéma, la colonne est nullable → autoriser vide
+        $specRaw = $_POST['specialization'] ?? '';
+        $specRaw = trim((string)$specRaw);
+
+        // On garde la valeur "old" telle que postée (utile pour re-sélectionner dans la vue)
+        $_SESSION['old']['specialization'] = $specRaw;
+
+        if ($specRaw === '') {
+            // Colonne nullable → aucune spécialisation choisie
             $specializationId = null;
+        } else {
+            // Doit être un entier positif
+            if (!ctype_digit($specRaw)) {
+                $errors[] = 'Spécialisation invalide.';
+            } else {
+                $candidateId = (int)$specRaw;
+                if ($candidateId <= 0) {
+                    $errors[] = 'Spécialisation invalide.';
+                } else {
+                    try {
+                        require_once __DIR__ . '/../models/SpecializationModel.php';
+                        $specModel = new SpecializationModel();
+
+                        if (!$specModel->existsById($candidateId)) {
+                            $errors[] = 'Spécialisation invalide.';
+                        } else {
+                            $specializationId = $candidateId; // OK
+                        }
+                    } catch (Throwable $e) {
+                        error_log('[Register] specialization exists check error: ' . $e->getMessage());
+                        $errors[] = 'Erreur interne sur la spécialisation.';
+                    }
+                }
+            }
         }
 
         // Mot de passe : règles applicatives (la DB ne connaît pas le plain)

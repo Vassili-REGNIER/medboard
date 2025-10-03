@@ -13,6 +13,17 @@ final class SpecializationModel
     }
 
     /**
+     * Vérifie l'existence d'une spécialisation par son ID.
+     */
+    public function existsById(int $id): bool
+    {
+        $sql = 'SELECT 1 FROM specializations WHERE specialization_id = :id LIMIT 1';
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute([':id' => $id]);
+        return (bool)$stmt->fetchColumn();
+    }
+
+    /**
      * Retourne la liste des spécialisations (id + libellé), triée par nom.
      * Format: [['specialization_id' => 1, 'name_en' => 'cardiology'], ...]
      */

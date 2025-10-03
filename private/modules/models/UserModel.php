@@ -13,30 +13,6 @@ final class UserModel
     }
 
     /**
-     * Retourne l'ID de spécialisation (table `specializations`) correspondant
-     * au nom exact (stocké en minuscules dans la DB). Renvoie null si introuvable.
-     * On normalise par sécurité (trim + lower), même si le contrôleur le fait déjà.
-     */
-    public function getSpecializationIdByName(string $name): ?int
-    {
-        $normalized = mb_strtolower(trim($name), 'UTF-8');
-
-        if ($normalized === '') {
-            return null;
-        }
-
-        $sql = 'SELECT specialization_id
-                FROM specializations
-                WHERE name_en = :name
-                LIMIT 1';
-        $stmt = $this->pdo->prepare($sql);
-        $stmt->execute([':name' => $normalized]);
-        $id = $stmt->fetchColumn();
-
-        return $id !== false ? (int) $id : null;
-    }
-
-    /**
      * Récupère un utilisateur à partir d'un login (email OU username).
      * Retourne: ['user_id','firstname','lastname','username','password_hash','email','specialization_id'] ou null
      */
