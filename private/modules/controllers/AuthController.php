@@ -12,22 +12,25 @@ final class AuthController
 
     public function register(): void
     {
+        // Consomme les flashs
+        [$old, $errors, $success] = array_values(Flash::consumeMany(['old','errors','success']));
+
         try {
             require_once __DIR__ . '/../models/SpecializationModel.php';
             $specModel = new SpecializationModel();
             $specializations = $specModel->getPairs();
         } catch (Throwable $e) {
             error_log('[AuthController::register] Failed to fetch specializations: ' . $e->getMessage());
-            $_SESSION['errors'][] = 'Impossible de charger la liste des spécialisations.';
+            $errors = array_filter(array_merge((array)$errors, ['Impossible de charger la liste des spécialisations.']));
             $specializations = []; // la vue affichera au moins l’option vide
         }
 
-        // La variable $specializations sera accessible dans la vue ci-dessous
+        // Les variables $specializations, $old et $errors seront accessibles dans la vue ci-dessous
         require dirname(__DIR__) . '/views/register.php';
     }
 
-
     public function login() {
+        [$old, $errors, $success] = array_values(Flash::consumeMany(['old','errors','success']));
         require dirname(__DIR__) . '/views/login.php';
     }
 
@@ -38,6 +41,13 @@ final class AuthController
      */
     public function handleLoginAndRedirect(?string $login, ?string $password): array
     {
+        if (($_SERVER['REQUEST_METHOD'] ?? 'GET') !== 'POST') {
+            http_response_code(405);
+            return ['Méthode non autorisée.'];
+        }
+
+        Csrf::requireValid('/auth/login'); // si CSRF invalide → redirect direct
+
         $errors = [];
 
         $login    = trim((string)$login);
@@ -65,7 +75,6 @@ final class AuthController
             $this->userModel ->maybeRehashPassword((int)$user['id'], $password, $hash);
 
             // Session + redirection
-            $this->ensureSession();
             session_regenerate_id(true);
 
             $_SESSION['user'] = [
@@ -78,7 +87,7 @@ final class AuthController
                 'login_at'       => time(),
             ];
 
-            header('Location: /'); // <- accueil connecté
+            redirect('/dashboard/index'); // <- accueil connecté
             exit;
 
         } catch (Throwable $e) {
@@ -91,7 +100,13 @@ final class AuthController
 
     public function handleLogoutAndRedirect(): void
     {
-        $this->ensureSession();
+        if (($_SERVER['REQUEST_METHOD'] ?? 'GET') !== 'POST') {
+            http_response_code(405);
+            echo 'Méthode non autorisée';
+            return;
+        }
+
+        Csrf::requireValid('/auth/login');
 
         $_SESSION = [];
         if (ini_get('session.use_cookies')) {
@@ -108,25 +123,10 @@ final class AuthController
         if (session_status() === PHP_SESSION_ACTIVE) {
             session_destroy();
         }
-
-        header('Location: /login.php');
+        
+        Flash::set('success', 'Vous êtes maintenant déconnecté.');
+        redirect('/auth/login');
         exit;
-    }
-
-    private function ensureSession(): void
-    {
-        if (session_status() === PHP_SESSION_ACTIVE) return;
-
-        $https = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on');
-        session_set_cookie_params([
-            'lifetime' => 0,
-            'path'     => '/',
-            'domain'   => '',
-            'secure'   => $https,
-            'httponly' => true,
-            'samesite' => 'Lax',
-        ]);
-        session_start();
     }
 
     public function handleRegisterAndRedirect(): void
@@ -137,15 +137,12 @@ final class AuthController
             return;
         }
 
-        // CSRF
-        $csrfSession = $_SESSION['csrf_token'] ?? '';
-        $csrfPost    = $_POST['csrf_token'] ?? '';
-        if (!$csrfSession || !$csrfPost || !hash_equals($csrfSession, $csrfPost)) {
-            $_SESSION['errors'] = ['Le formulaire a expiré. Merci de réessayer.'];
-            $_SESSION['old'] = $_POST;
-            redirect('/auth/register');
-            return;
-        }
+        Csrf::requireValid('/auth/register', true); // garde $_POST dans $_SESSION['old']
+
+        $sess = $_SESSION['csrf_token'] ?? '';
+        //$post = $_POST[$key] ?? '';
+        //return $sess && $post && hash_equals($sess, $post);
+    
 
         // -----------------------------
         // 1) Inputs + normalisation DB-like (trim + lower)
@@ -173,13 +170,13 @@ final class AuthController
         $specName  = mb_strtolower($specName, 'UTF-8');
 
         // Flash old (versions normalisées, car c’est ce qui sera stocké en DB)
-        $_SESSION['old'] = [
+        +Flash::set('old', [
             'firstname'      => $firstname,
             'lastname'       => $lastname,
             'username'       => $username,
             'email'          => $email,
             'specialization' => $specName,
-        ];
+        ]);
 
         // -----------------------------
         // 2) Validations alignées sur la DB (mêmes regex/longueurs)
@@ -243,7 +240,9 @@ final class AuthController
         $specRaw = trim((string)$specRaw);
 
         // On garde la valeur "old" telle que postée (utile pour re-sélectionner dans la vue)
-        $_SESSION['old']['specialization'] = $specRaw;
+        $oldNow = Flash::get('old', []);
+        $oldNow['specialization'] = $specRaw;
+        Flash::set('old', $oldNow);
 
         if ($specRaw === '') {
             // Colonne nullable → aucune spécialisation choisie
@@ -283,7 +282,7 @@ final class AuthController
         }
 
         if ($errors) {
-            $_SESSION['errors'] = $errors;
+            Flash::set('errors', $errors);
             redirect('/auth/register');
             return;
         }
@@ -300,7 +299,7 @@ final class AuthController
                 $existsErr[] = 'Cet email est déjà utilisé.';
             }
             if ($existsErr) {
-                $_SESSION['errors'] = $existsErr;
+                Flash::set('errors', $existsErr);
                 redirect('/auth/register');
                 return;
             }
@@ -315,7 +314,7 @@ final class AuthController
         // 4) Hash Argon2id + validation PHC (comme le CHECK SQL)
         // -----------------------------
         if (!defined('PASSWORD_ARGON2ID')) {
-            $_SESSION['errors'] = ['Le serveur ne supporte pas Argon2id.'];
+            Flash::set('errors', ['Le serveur ne supporte pas Argon2id.']);
             redirect('/auth/register');
             return;
         }
@@ -324,7 +323,7 @@ final class AuthController
         if ($hash === false || !preg_match($reArgon2, $hash)) {
             // Si jamais l’implémentation retourne un format inattendu, on bloque (la DB refusera).
             error_log('[Register] Argon2id hash does not match PHC format: ' . var_export($hash, true));
-            $_SESSION['errors'] = ['Erreur interne lors du hachage du mot de passe.'];
+            Flash::set('errors', ['Erreur interne lors du hachage du mot de passe.']);
             redirect('/auth/register');
             return;
         }
@@ -342,7 +341,7 @@ final class AuthController
                 'specialization_id' => $specializationId, // <- FK nullable
             ]);
 
-            $_SESSION['success'] = 'Compte créé avec succès, vous pouvez vous connecter.';
+            Flash::set('success', 'Compte créé avec succès, vous pouvez vous connecter.');
             // Option: auto-login
             // $_SESSION['user_id'] = $userId;
             redirect('/auth/login');
@@ -355,19 +354,19 @@ final class AuthController
                 $human = 'Ce nom d’utilisateur ou cet email est déjà utilisé.';
                 if (stripos($msg, 'username') !== false) $human = 'Ce nom d’utilisateur est déjà utilisé.';
                 if (stripos($msg, 'email')    !== false) $human = 'Cet email est déjà utilisé.';
-                $_SESSION['errors'] = [$human];
+                Flash::set('errors', [$human]);
                 redirect('/auth/register');
                 return;
             }
 
             error_log('[Register] DB error: ' . $e->getMessage());
-            $_SESSION['errors'] = ['Erreur interne lors de la création du compte.'];
+            Flash::set('errors', ['Erreur interne lors de la création du compte.']);
             redirect('/auth/register');
             return;
 
         } catch (Throwable $e) {
             error_log('[Register] Fatal: ' . $e->getMessage());
-            $_SESSION['errors'] = ['Erreur interne inattendue.'];
+            Flash::set('errors', ['Erreur interne inattendue.']);
             redirect('/auth/register');
             return;
         }

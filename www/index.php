@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 session_start();
 
+
+
 /**
  * Chargements : autoloader (connait déjà "modules\"),
  * config générale (définit notamment MODULES_PATH, BASE_URL éventuelle),
@@ -11,7 +13,11 @@ session_start();
  */
 require __DIR__ . '/../private/config/config.php';
 require __DIR__ . '/../private/config/autoloader.php';
+require __DIR__ . '/../private/utils/Flash.php';
+require __DIR__ . '/../private/utils/Csrf.php';
 $routes = require __DIR__ . '/../private/config/routes.php';
+
+Csrf::ensureToken();
 
 /** ==================== Helpers auth & nav ==================== */
 function redirect(string $url): never {

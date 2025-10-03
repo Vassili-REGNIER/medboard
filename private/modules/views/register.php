@@ -1,16 +1,7 @@
 <?php
 // private/modules/views/register.php
 
-// On suppose que la session est déjà démarrée par le front-controller.
-// Génère un token CSRF si absent
-if (empty($_SESSION['csrf_token'])) {
-    $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
-}
 
-// Petits helpers d’affichage
-$old = $_SESSION['old'] ?? [];
-$errors = $_SESSION['errors'] ?? [];
-unset($_SESSION['old'], $_SESSION['errors']); // on consomme les flashs
 ?>
 <!doctype html>
 <html lang="fr">
