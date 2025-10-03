@@ -135,43 +135,116 @@ final class AuthController
             return;
         }
 
-        // Inputs
-        $firstname      = trim($_POST['firstname'] ?? '');
-        $lastname       = trim($_POST['lastname'] ?? '');
-        $username       = trim($_POST['username'] ?? '');
-        $email          = trim($_POST['email'] ?? '');
-        $specialization = trim($_POST['specialization'] ?? '');
-        $password       = $_POST['password'] ?? '';
-        $password2      = $_POST['password_confirm'] ?? '';
+        // -----------------------------
+        // 1) Inputs + normalisation DB-like (trim + lower)
+        // -----------------------------
+        $firstnameRaw      = $_POST['firstname']      ?? '';
+        $lastnameRaw       = $_POST['lastname']       ?? '';
+        $usernameRaw       = $_POST['username']       ?? '';
+        $emailRaw          = $_POST['email']          ?? '';
+        $specializationRaw = $_POST['specialization'] ?? '';
+        $password          = $_POST['password']       ?? '';
+        $password2         = $_POST['password_confirm'] ?? '';
 
-        // Flash old
+        // Trim
+        $firstname = trim($firstnameRaw);
+        $lastname  = trim($lastnameRaw);
+        $username  = trim($usernameRaw);
+        $email     = trim($emailRaw);
+        $specName  = trim($specializationRaw);
+
+        // Lowercase (comme les triggers SQL)
+        $firstname = mb_strtolower($firstname, 'UTF-8');
+        $lastname  = mb_strtolower($lastname, 'UTF-8');
+        $username  = mb_strtolower($username, 'UTF-8');
+        $email     = mb_strtolower($email, 'UTF-8');
+        $specName  = mb_strtolower($specName, 'UTF-8');
+
+        // Flash old (versions normalisées, car c’est ce qui sera stocké en DB)
         $_SESSION['old'] = [
             'firstname'      => $firstname,
             'lastname'       => $lastname,
             'username'       => $username,
             'email'          => $email,
-            'specialization' => $specialization,
+            'specialization' => $specName,
         ];
 
-        // Validations
+        // -----------------------------
+        // 2) Validations alignées sur la DB (mêmes regex/longueurs)
+        // -----------------------------
         $errors = [];
-        if ($firstname === '' || mb_strlen($firstname) < 2) {
-            $errors[] = 'Le prénom est requis (≥ 2 caractères).';
+
+        // Longueurs max (colonnes)
+        if (mb_strlen($firstname, 'UTF-8') === 0) {
+            $errors[] = 'Le prénom est requis.';
+        } elseif (mb_strlen($firstname, 'UTF-8') > 32) {
+            $errors[] = 'Le prénom ne doit pas dépasser 32 caractères.';
         }
-        if ($lastname === '' || mb_strlen($lastname) < 2) {
-            $errors[] = 'Le nom est requis (≥ 2 caractères).';
+
+        if (mb_strlen($lastname, 'UTF-8') === 0) {
+            $errors[] = 'Le nom est requis.';
+        } elseif (mb_strlen($lastname, 'UTF-8') > 32) {
+            $errors[] = 'Le nom ne doit pas dépasser 32 caractères.';
         }
-        if ($username === '' || !preg_match('/^[a-zA-Z0-9_.-]{3,32}$/', $username)) {
-            $errors[] = 'Le nom d’utilisateur est requis (3–32, alphanumérique, ., -, _).';
+
+        if (mb_strlen($username, 'UTF-8') === 0) {
+            $errors[] = 'Le nom d’utilisateur est requis.';
+        } elseif (mb_strlen($username, 'UTF-8') > 32) {
+            $errors[] = 'Le nom d’utilisateur ne doit pas dépasser 32 caractères.';
         }
-        if ($email === '' || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
-            $errors[] = 'Email invalide.';
+
+        if (mb_strlen($email, 'UTF-8') === 0) {
+            $errors[] = 'L’email est requis.';
+        } elseif (mb_strlen($email, 'UTF-8') > 254) {
+            $errors[] = 'L’email ne doit pas dépasser 254 caractères.';
         }
-        $allowedSpecs = ['development','clinical','work','health']; // adapte à ton métier
-        if (!in_array($specialization, $allowedSpecs, true)) {
-            $errors[] = 'Spécialisation invalide.';
+
+        // Regex EXACTES des CHECK SQL
+        $reName   = '/^[a-zà-öø-ÿ\' -]+$/u';                 // firstname / lastname
+        $reUser   = '/^[a-z][a-z0-9_.-]*$/';                 // username
+        $reEmail  = '/^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$/';
+        $reArgon2 = '/^\$argon2id\$v=\d+\$m=\d+,t=\d+,p=\d+\$[A-Za-z0-9+\/=]+\$[A-Za-z0-9+\/=]+$/';
+
+        if ($firstname !== '' && !preg_match($reName, $firstname)) {
+            $errors[] = 'Le prénom contient des caractères non autorisés.';
         }
-        if (strlen($password) < 8) {
+        if ($lastname !== '' && !preg_match($reName, $lastname)) {
+            $errors[] = 'Le nom contient des caractères non autorisés.';
+        }
+
+        // username : 3–32, commence par une lettre, alphanum + . _ -
+        if ($username !== '') {
+            if (mb_strlen($username, 'UTF-8') < 3 || mb_strlen($username, 'UTF-8') > 32) {
+                $errors[] = 'Le nom d’utilisateur doit faire entre 3 et 32 caractères.';
+            } elseif (!preg_match($reUser, $username)) {
+                $errors[] = 'Le nom d’utilisateur doit commencer par une lettre et ne contenir que des lettres, chiffres, points, tirets et underscores.';
+            }
+        }
+
+        if ($email !== '' && !preg_match($reEmail, $email)) {
+            $errors[] = 'Format d’email invalide.';
+        }
+
+        // Spécialisation : lookup table (exactement comme la FK)
+        $specializationId = null;
+        if ($specName !== '') {
+            try {
+                // Méthode à implémenter dans ton modèle si nécessaire.
+                $specializationId = $this->userModel->getSpecializationIdByName($specName); // retourne ?int
+                if ($specializationId === null) {
+                    $errors[] = 'Spécialisation invalide.';
+                }
+            } catch (Throwable $e) {
+                error_log('[Register] specialization lookup error: ' . $e->getMessage());
+                $errors[] = 'Erreur interne sur la spécialisation.';
+            }
+        } else {
+            // Dans le schéma, la colonne est nullable → autoriser vide
+            $specializationId = null;
+        }
+
+        // Mot de passe : règles applicatives (la DB ne connaît pas le plain)
+        if (mb_strlen($password, '8bit') < 8) { // 8bit pour la longueur brute
             $errors[] = 'Le mot de passe doit contenir au moins 8 caractères.';
         }
         if (!hash_equals($password, $password2)) {
@@ -184,10 +257,10 @@ final class AuthController
             return;
         }
 
-        // Appel au Model
+        // -----------------------------
+        // 3) Unicité applicative (sur valeurs normalisées)
+        // -----------------------------
         try {
-
-            // Contrôle applicatif d’unicité avant INSERT
             $existsErr = [];
             if ($this->userModel->isUsernameTaken($username)) {
                 $existsErr[] = 'Ce nom d’utilisateur est déjà utilisé.';
@@ -200,17 +273,44 @@ final class AuthController
                 redirect('/auth/register');
                 return;
             }
+        } catch (Throwable $e) {
+            error_log('[Register] uniqueness check error: ' . $e->getMessage());
+            $_SESSION['errors'] = ['Erreur interne lors de la vérification des doublons.'];
+            redirect('/auth/register');
+            return;
+        }
 
+        // -----------------------------
+        // 4) Hash Argon2id + validation PHC (comme le CHECK SQL)
+        // -----------------------------
+        if (!defined('PASSWORD_ARGON2ID')) {
+            $_SESSION['errors'] = ['Le serveur ne supporte pas Argon2id.'];
+            redirect('/auth/register');
+            return;
+        }
+
+        $hash = password_hash($password, PASSWORD_ARGON2ID);
+        if ($hash === false || !preg_match($reArgon2, $hash)) {
+            // Si jamais l’implémentation retourne un format inattendu, on bloque (la DB refusera).
+            error_log('[Register] Argon2id hash does not match PHC format: ' . var_export($hash, true));
+            $_SESSION['errors'] = ['Erreur interne lors du hachage du mot de passe.'];
+            redirect('/auth/register');
+            return;
+        }
+
+        // -----------------------------
+        // 5) INSERT (valeurs validées et normalisées)
+        // -----------------------------
+        try {
             $userId = $this->userModel->createUser([
-                'firstname'      => $firstname,
-                'lastname'       => $lastname,
-                'username'       => $username,
-                'password_hash'  => password_hash($password, PASSWORD_ARGON2ID),
-                'email'          => $email,
-                'specialization' => $specialization,
+                'firstname'         => $firstname,
+                'lastname'          => $lastname,
+                'username'          => $username,
+                'password_hash'     => $hash,
+                'email'             => $email,
+                'specialization_id' => $specializationId, // <- FK nullable
             ]);
 
-            // Succès
             $_SESSION['success'] = 'Compte créé avec succès, vous pouvez vous connecter.';
             // Option: auto-login
             // $_SESSION['user_id'] = $userId;
@@ -218,12 +318,12 @@ final class AuthController
             return;
 
         } catch (PDOException $e) {
-            // Conflits d’unicité côté DB (au cas où l’état change entre la vérif et l’insert)
-            if ($e->getCode() === '23505') { // unique_violation (PostgreSQL)
+            // Gestion des conflits d'unicité DB (race conditions)
+            if ($e->getCode() === '23505') { // unique_violation
                 $msg = $e->getMessage();
                 $human = 'Ce nom d’utilisateur ou cet email est déjà utilisé.';
                 if (stripos($msg, 'username') !== false) $human = 'Ce nom d’utilisateur est déjà utilisé.';
-                if (stripos($msg, 'email') !== false)    $human = 'Cet email est déjà utilisé.';
+                if (stripos($msg, 'email')    !== false) $human = 'Cet email est déjà utilisé.';
                 $_SESSION['errors'] = [$human];
                 redirect('/auth/register');
                 return;
@@ -241,4 +341,5 @@ final class AuthController
             return;
         }
     }
+
 }

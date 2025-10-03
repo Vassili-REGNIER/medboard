@@ -13,12 +13,36 @@ final class UserModel
     }
 
     /**
+     * Retourne l'ID de spécialisation (table `specializations`) correspondant
+     * au nom exact (stocké en minuscules dans la DB). Renvoie null si introuvable.
+     * On normalise par sécurité (trim + lower), même si le contrôleur le fait déjà.
+     */
+    public function getSpecializationIdByName(string $name): ?int
+    {
+        $normalized = mb_strtolower(trim($name), 'UTF-8');
+
+        if ($normalized === '') {
+            return null;
+        }
+
+        $sql = 'SELECT specialization_id
+                FROM specializations
+                WHERE name_en = :name
+                LIMIT 1';
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute([':name' => $normalized]);
+        $id = $stmt->fetchColumn();
+
+        return $id !== false ? (int) $id : null;
+    }
+
+    /**
      * Récupère un utilisateur à partir d'un login (email OU username).
-     * Retourne: ['id','email','username','password_hash','role','is_active'] ou null
+     * Retourne: ['user_id','firstname','lastname','username','password_hash','email','specialization_id'] ou null
      */
     public function findByLogin(string $login): ?array
     {
-        $sql = "SELECT user_id, firstname, lastname, username, password_hash, email, specialization
+        $sql = "SELECT user_id, firstname, lastname, username, password_hash, email, specialization_id
                 FROM users
                 WHERE email = :login OR username = :login
                 LIMIT 1";
@@ -45,7 +69,8 @@ final class UserModel
         }
 
         $newHash = password_hash($plainPassword, PASSWORD_ARGON2ID, $opts);
-        $upd = $this->pdo->prepare("UPDATE users SET password_hash = :h WHERE id = :id");
+
+        $upd = $this->pdo->prepare("UPDATE users SET password_hash = :h WHERE user_id = :id");
         $upd->execute([':h' => $newHash, ':id' => $userId]);
     }
 
@@ -72,25 +97,27 @@ final class UserModel
     }
 
     /**
-     * Crée l’utilisateur et renvoie son user_id (int/uuid selon ton schéma).
-     * Laisse remonter PDOException (codes SQLSTATE) pour que le contrôleur décide quoi afficher.
+     * Crée l’utilisateur et renvoie son user_id.
+     * Attend un tableau $data avec les clés :
+     *  - firstname, lastname, username, password_hash, email
+     *  - specialization_id (nullable)
      */
     public function createUser(array $data)
     {
         $sql = <<<SQL
-            INSERT INTO users (firstname, lastname, username, password_hash, email, specialization)
-            VALUES (:firstname, :lastname, :username, :password_hash, :email, :specialization)
+            INSERT INTO users (firstname, lastname, username, password_hash, email, specialization_id)
+            VALUES (:firstname, :lastname, :username, :password_hash, :email, :specialization_id)
             RETURNING user_id
         SQL;
 
         $stmt = $this->pdo->prepare($sql);
         $stmt->execute([
-            ':firstname'      => $data['firstname'],
-            ':lastname'       => $data['lastname'],
-            ':username'       => $data['username'],
-            ':password_hash'  => $data['password_hash'],
-            ':email'          => $data['email'],
-            ':specialization' => $data['specialization'],
+            ':firstname'         => $data['firstname'],
+            ':lastname'          => $data['lastname'],
+            ':username'          => $data['username'],
+            ':password_hash'     => $data['password_hash'],
+            ':email'             => $data['email'],
+            ':specialization_id' => $data['specialization_id'] ?? null,
         ]);
 
         return $stmt->fetchColumn(); // user_id
