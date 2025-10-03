@@ -12,8 +12,23 @@ final class AuthController
 
     public function register(): void
     {
+        try {
+            require_once __DIR__ . '/../models/SpecializationModel.php';
+            $specModel = new SpecializationModel();
+            // Soit la liste brute:
+            // $specializations = $specModel->getAll();
+            // Soit des paires id => label (pratique pour un select) :
+            $specializations = $specModel->getPairs();
+        } catch (Throwable $e) {
+            error_log('[AuthController::register] Failed to fetch specializations: ' . $e->getMessage());
+            $_SESSION['errors'][] = 'Impossible de charger la liste des spécialisations.';
+            $specializations = []; // la vue affichera au moins l’option vide
+        }
+
+        // La variable $specializations sera accessible dans la vue ci-dessous
         require dirname(__DIR__) . '/views/register.php';
     }
+
 
     public function login() {
         require dirname(__DIR__) . '/views/login.php';

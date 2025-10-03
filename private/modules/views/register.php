@@ -78,21 +78,17 @@ unset($_SESSION['old'], $_SESSION['errors']); // on consomme les flashs
 
         <div class="field">
           <label for="specialization">Spécialisation</label>
-          <select id="specialization" name="specialization" required>
+          <select id="specialization" name="specialization">
+            <option value="">-- Aucune --</option>
             <?php
-              // Liste indicative
-              $options = [
-                'development' => 'Psychologie du développement',
-                'clinical'    => 'Psychologie clinique',
-                'work'        => 'Psychologie du travail',
-                'health'      => 'Psychologie clinique de la santé',
-              ];
               $current = $old['specialization'] ?? '';
-              foreach ($options as $val => $label):
+              foreach ($specializations as $id => $label):
+                  // Ici $label est en anglais (base en minuscules) :
+                  $display = ucfirst($label); // ou mapping/traduction côté vue si tu veux FR
             ?>
-              <option value="<?= htmlspecialchars($val, ENT_QUOTES, 'UTF-8') ?>"
-                <?= $current === $val ? 'selected' : '' ?>>
-                <?= htmlspecialchars($label, ENT_QUOTES, 'UTF-8') ?>
+              <option value="<?= htmlspecialchars((string)$id, ENT_QUOTES, 'UTF-8') ?>"
+                <?= ($current === (string)$id) ? 'selected' : '' ?>>
+                <?= htmlspecialchars($display, ENT_QUOTES, 'UTF-8') ?>
               </option>
             <?php endforeach; ?>
           </select>

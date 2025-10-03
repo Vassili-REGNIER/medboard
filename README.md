@@ -24,7 +24,7 @@ Ce README fournit les instructions pour installer, développer et livrer le proj
 
 Script de création de la base de donnée : 
 
-```sql 
+```sql
 -- ============================================================================
 -- PostgreSQL — Medical supervision DB (lowercase-only inputs, no CITEXT)
 -- ============================================================================
