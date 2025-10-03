@@ -15,9 +15,6 @@ final class AuthController
         try {
             require_once __DIR__ . '/../models/SpecializationModel.php';
             $specModel = new SpecializationModel();
-            // Soit la liste brute:
-            // $specializations = $specModel->getAll();
-            // Soit des paires id => label (pratique pour un select) :
             $specializations = $specModel->getPairs();
         } catch (Throwable $e) {
             error_log('[AuthController::register] Failed to fetch specializations: ' . $e->getMessage());
@@ -85,7 +82,7 @@ final class AuthController
             exit;
 
         } catch (Throwable $e) {
-            // Log en prod: error_log($e->getMessage());
+            error_log($e->getMessage());
             $errors[] = "Erreur interne. Réessaie plus tard.";
         }
 
