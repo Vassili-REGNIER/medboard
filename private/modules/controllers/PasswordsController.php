@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+require_once BASE_PATH . "/private/utils/MailService.php";
 
 final class PasswordsController
 {
