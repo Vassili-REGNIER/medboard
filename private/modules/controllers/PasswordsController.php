@@ -49,7 +49,7 @@ final class PasswordsController
     public function store()
     {
         Auth::requireGuest();
-        Csrf::requireValid('/forgot-password', true);
+        Csrf::requireValid('/auth/forgot-password', true);
 
         // 1) Inputs
         $email = Inputs::sanitizeEmail($_POST['email'] ?? '');
@@ -65,7 +65,7 @@ final class PasswordsController
 
         if ($errors) {
             Flash::set('errors', $errors);
-            header('Location: /forgot-password', true, 302);
+            Http::redirect('/auth/forgot-password');
             return;
         }
 
@@ -77,7 +77,7 @@ final class PasswordsController
 
         if (!$user) {
             Flash::set('success', $publicSuccessMsg);
-            header('Location: /forgot-password', true, 302);
+            Http::redirect('/auth/forgot-password');
             return;
         }
 
@@ -97,7 +97,7 @@ final class PasswordsController
 
         if (!$resetId) {
             Flash::set('errors', ['global' => 'Une erreur est survenue. Merci de réessayer.']);
-            header('Location: /forgot-password', true, 302);
+            Http::redirect('/auth/forgot-password');
             return;
         }
 
@@ -139,7 +139,7 @@ final class PasswordsController
         }
 
         // 8) Redirect
-        header('Location: /forgot-password', true, 302);
+        Http::redirect('auth/reset-password');
         return;
     }
 
@@ -171,7 +171,7 @@ final class PasswordsController
     public function update()
     {
         Auth::requireGuest();
-        Csrf::requireValid('/reset-password', true);
+        Csrf::requireValid('/auth/reset-password', true);
 
         // 1) Récup + sanitize
         $token = Inputs::sanitizeBase64UrlToken($_POST['token'] ?? '');
@@ -199,7 +199,7 @@ final class PasswordsController
 
         if ($errors) {
             Flash::set('errors', $errors);
-            header('Location: /reset-password?token='.urlencode($token).'&uid='.(int)$uid, true, 302);
+            Http::redirect('/reset-password?token='.urlencode($token).'&uid='.(int)$uid);
             return;
         }
 
@@ -208,7 +208,7 @@ final class PasswordsController
 
         if (!$resetRow) {
             Flash::set('errors', ['global' => 'Lien de réinitialisation invalide ou expiré.']);
-            header('Location: /reset-password?token='.urlencode($token).'&uid='.(int)$uid, true, 302);
+            Http::redirect('/reset-password?token='.urlencode($token).'&uid='.(int)$uid);
             return;
         }
 
@@ -217,7 +217,7 @@ final class PasswordsController
         if ($hash === false || ($msg = Inputs::validateArgon2idPHC($hash))) {
             // log éventuel
             Flash::set('errors', ['global' => 'Erreur interne lors du hachage du mot de passe.']);
-            header('Location: /reset-password?token='.urlencode($token).'&uid='.(int)$uid, true, 302);
+            Http::redirect('/reset-password?token='.urlencode($token).'&uid='.(int)$uid);
             return;
         }
 
@@ -226,12 +226,12 @@ final class PasswordsController
             $this->userModel->updatePassword((int)$uid, $hash);
             $this->passwordResetModel->markUsedById((int)$resetRow['id']); // set used_at = NOW()
             Flash::set('success', 'Votre mot de passe a été réinitialisé. Vous pouvez vous connecter.');
-            header('Location: /auth/login', true, 302);
+            Http::redirect('/auth/login');
             return;
         } catch (Throwable $e) {
             // log éventuel
             Flash::set('errors', ['global' => 'Erreur interne lors de la mise à jour du mot de passe.']);
-            header('Location: /reset-password?token='.urlencode($token).'&uid='.(int)$uid, true, 302);
+            Http::redirect('reset-password?token='.urlencode($token).'&uid='.(int)$uid);
             return;
         }
     }
