@@ -11,9 +11,9 @@ final class StaticPagesController
         require __DIR__ . '/../views/sitemap.php';
     }
 
-    public function about(): void
+    public function legal(): void
     {
-        require __DIR__ . '/../views/about.php';
+        require __DIR__ . '/../views/legal.php';
     }
 
 }
