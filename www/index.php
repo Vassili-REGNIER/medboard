@@ -15,6 +15,8 @@ require __DIR__ . '/../private/utils/Flash.php';
 require __DIR__ . '/../private/utils/Csrf.php';
 require __DIR__ . '/../private/utils/Auth.php';
 require __DIR__ . '/../private/utils/Http.php';
+require __DIR__ . '/../private/utils/Inputs.php';
+
 require_once BASE_PATH . '/vendor/autoload.php';
 
 $routes = require __DIR__ . '/../private/config/routes.php';
