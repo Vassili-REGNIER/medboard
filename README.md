@@ -159,4 +159,31 @@ EXECUTE FUNCTION specializations_normalize();
 -- Fin du script
 -- ============================================================================
  
+
+-- Table pour gérer les demandes de réinitialisation de mot de passe
+-- Table pour gérer les demandes de réinitialisation de mot de passe
+CREATE TABLE public.password_resets (
+    id          BIGSERIAL PRIMARY KEY,
+    user_id     INT NOT NULL,
+    token_hash  CHAR(64) NOT NULL,               -- hash SHA-256 hex (64 chars)
+    expires_at  TIMESTAMPTZ NOT NULL,            -- avec fuseau horaire
+    used_at     TIMESTAMPTZ NULL,
+    created_at  TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+
+    CONSTRAINT fk_password_resets_user
+        FOREIGN KEY (user_id) REFERENCES public.users(user_id)
+        ON DELETE CASCADE
+);
+
+-- Un même token_hash ne doit exister qu’une seule fois
+CREATE UNIQUE INDEX ux_password_resets_token_hash
+    ON public.password_resets (token_hash);
+
+-- Index utiles pour les vérifs / purges
+CREATE INDEX ix_password_resets_expires_at
+    ON public.password_resets (expires_at);
+
+CREATE INDEX ix_password_resets_user_id
+    ON public.password_resets (user_id);
+
 ```

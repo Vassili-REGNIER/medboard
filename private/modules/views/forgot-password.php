@@ -34,7 +34,7 @@
     <?php endif; ?>
 
     <div class="card">
-      <form method="post" action="/auth/forgot-password/submit" novalidate>
+      <form method="post" action="/auth/forgot-password" novalidate>
         <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'], ENT_QUOTES, 'UTF-8') ?>">
 
         <div class="field">
