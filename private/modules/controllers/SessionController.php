@@ -38,6 +38,8 @@ final class SessionController
     }
     
     public function create() {
+        Auth::requireGuest(); // Si l'utilisateur est deja connecté -> /dashboard/index
+
         [$old, $errors, $success] = array_values(Flash::consumeMany(['old','errors','success']));
         require dirname(__DIR__) . '/views/login.php';
     }
@@ -103,17 +105,11 @@ final class SessionController
 
     public function destroy(): void
     {
-        if (($_SERVER['REQUEST_METHOD'] ?? 'GET') !== 'POST') {
-            http_response_code(405);
-            echo 'Méthode non autorisée';
-            return;
-        }
-
         // Pour un logout, vérifie le token CSRF du formulaire de logout,
         // pas celui de /auth/login.
         Csrf::requireValid('/auth/logout');
 
-        Auth::logout(); // <-- point unique de vérité
+        Auth::logout();
 
         Flash::set('success', 'Vous êtes maintenant déconnecté.');
         Http::redirect('/auth/login');

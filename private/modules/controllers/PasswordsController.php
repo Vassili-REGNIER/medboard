@@ -42,19 +42,32 @@ final class PasswordsController
         }
     }
 
-    public function create() {
-        // Affiche "mdp oublié"
+    public function create()
+    {
+        Auth::requireGuest();
+        
+        [$old, $errors, $success] = array_values(Flash::consumeMany(['old','errors','success']));
+
+        // Les variables $specializations, $old et $errors seront accessibles dans la vue ci-dessous
+        require dirname(__DIR__) . '/views/forgot-password.php';
     }
 
-    public function store() {
+    public function store() 
+    {    
+        Csrf::requireValid('/auth/register', true);
+        
         // Envoyer le lien de reset
     }
 
-    public function edit() {
+    public function edit() 
+    {
         // Afficher reset
     }
 
-    public function update() {
+    public function update() 
+    {
+        Csrf::requireValid('/auth/register', true);
+        
         // Valider reset
     }
 }

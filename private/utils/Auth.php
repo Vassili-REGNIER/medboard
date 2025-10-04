@@ -24,6 +24,13 @@ final class Auth
         }
     }
 
+    public static function requireGuest(): void {
+        if (self::check()) {
+            Http::redirect('/dashboard/index');
+            exit;
+        }
+    }
+
     public static function logout(): void
     {
         // Purge de la session en mémoire

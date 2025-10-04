@@ -28,6 +28,8 @@ final class RegistrationController
 
     public function create(): void
     {
+        Auth::requireGuest();
+
         // Consomme les flashs
         [$old, $errors, $success] = array_values(Flash::consumeMany(['old','errors','success']));
 
@@ -45,16 +47,9 @@ final class RegistrationController
         require dirname(__DIR__) . '/views/register.php';
     }
 
-   
     public function store(): void
     {
-        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            http_response_code(405);
-            echo 'Méthode non autorisée';
-            return;
-        }
-
-        Csrf::requireValid('/auth/register', true); // garde $_POST dans $_SESSION['old']
+        Csrf::requireValid('/auth/register', true);
 
         $sess = $_SESSION['csrf_token'] ?? '';
         //$post = $_POST[$key] ?? '';

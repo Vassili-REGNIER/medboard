@@ -15,5 +15,4 @@ final class StaticPagesController
     {
         require __DIR__ . '/../views/legal.php';
     }
-
 }
