@@ -139,7 +139,7 @@ final class PasswordsController
         }
 
         // 8) Redirect
-        Http::redirect('/auth/reset-password');
+        Http::redirect('/auth/forgot-password');
         return;
     }
 
