@@ -12,3 +12,5 @@ define("DB_PASS", "password");
 define("DB_NAME", "database_name");
 define("DB_CHARSET", "charset_name");
 
+define("SMTP_HOST","");
+define("SMPT_PASS","");

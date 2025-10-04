@@ -13,6 +13,27 @@ final class UserModel
     }
 
     /**
+     * Met à jour le mot de passe hashé d'un utilisateur.
+     * @return bool true si exactement 1 ligne mise à jour
+     */
+    public function updatePassword(int $userId, string $passwordHash): bool
+    {
+        $sql = 'UPDATE users
+                   SET password_hash = :hash,
+                       updated_at = NOW()           -- si tu as cette colonne
+                       -- , password_changed_at = NOW()  -- optionnel si tu la gères
+                 WHERE user_id = :id';
+
+        $stmt = $this->pdo->prepare($sql);
+        $ok   = $stmt->execute([
+            ':hash' => $passwordHash,
+            ':id'   => $userId,
+        ]);
+
+        return $ok && $stmt->rowCount() === 1;
+    }
+
+    /**
      * Récupère un utilisateur à partir d'un login (email OU username).
      * Retourne: ['user_id','firstname','lastname','username','password_hash','email','specialization_id'] ou null
      */
