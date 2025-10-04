@@ -1,5 +1,5 @@
 <?php
-final class DashBoardController
+final class DashboardController
 {
     public function index(): void
     {
