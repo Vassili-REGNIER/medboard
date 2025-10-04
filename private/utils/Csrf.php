@@ -31,7 +31,7 @@ final class Csrf
             if ($keepOld) {
                 Flash::set('old', $_POST);
             }
-            redirect($redirectUrl);
+            Http::redirect($redirectUrl);
             exit; // On sort tout de suite
         }
     }

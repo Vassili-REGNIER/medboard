@@ -10,7 +10,23 @@ final class AuthController
         $this->userModel  = new UserModel();
     }
 
-    public function register(): void
+    public function register() {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST')
+        {   
+            return $this->store();
+        }
+        elseif ($_SERVER['REQUEST_METHOD'] === 'GET') 
+        {
+            return $this->create();
+        }
+        else
+        {
+            http_response_code(405);
+            return ['Méthode non autorisée.'];
+        }
+    }
+
+    public function create(): void
     {
         // Consomme les flashs
         [$old, $errors, $success] = array_values(Flash::consumeMany(['old','errors','success']));
@@ -20,7 +36,7 @@ final class AuthController
             $specModel = new SpecializationModel();
             $specializations = $specModel->getPairs();
         } catch (Throwable $e) {
-            error_log('[AuthController::register] Failed to fetch specializations: ' . $e->getMessage());
+            error_log('[RegistrationController::create] Failed to fetch specializations: ' . $e->getMessage());
             $errors = array_filter(array_merge((array)$errors, ['Impossible de charger la liste des spécialisations.']));
             $specializations = []; // la vue affichera au moins l’option vide
         }
@@ -29,107 +45,8 @@ final class AuthController
         require dirname(__DIR__) . '/views/register.php';
     }
 
-    public function login() {
-        [$old, $errors, $success] = array_values(Flash::consumeMany(['old','errors','success']));
-        require dirname(__DIR__) . '/views/login.php';
-    }
-
-    /**
-     * Tente la connexion via un login (email OU username) + mot de passe.
-     * Si succès: ouvre la session et REDIRIGE vers l'accueil connecté ('/').
-     * Si échec: retourne un tableau d'erreurs (et ne redirige pas).
-     */
-    public function handleLoginAndRedirect(?string $login, ?string $password): array
-    {
-        if (($_SERVER['REQUEST_METHOD'] ?? 'GET') !== 'POST') {
-            http_response_code(405);
-            return ['Méthode non autorisée.'];
-        }
-
-        Csrf::requireValid('/auth/login'); // si CSRF invalide → redirect direct
-
-        $errors = [];
-
-        $login    = trim((string)$login);
-        $password = (string)$password;
-
-        if ($login === '' || $password === '') {
-            return ["Identifiants requis."];
-        }
-
-        // Normaliser en lowercase.
-        $login = mb_strtolower($login);
-
-        try {
-            $user = $this->userModel ->findByLogin($login);
-            if (!$user) {
-                return ["Identifiants invalides."];
-            }
-
-            $hash = (string)($user['password_hash'] ?? '');
-            if ($hash === '' || !password_verify($password, $hash)) {
-                return ["Identifiants invalides."];
-            }
-
-            // Rehash éventuel en tâche courte (sécurité évolutive)
-            $this->userModel ->maybeRehashPassword((int)$user['id'], $password, $hash);
-
-            // Session + redirection
-            session_regenerate_id(true);
-
-            $_SESSION['user'] = [
-                'user_id'        => (int)$user['user_id'],
-                'firstname'      => $user['firstname'] ?? null,
-                'lastname'       => $user['lastname'] ?? null,
-                'username'       => $user['username'] ?? null,
-                'email'          => $user['email'] ?? null,
-                'specialization' => $user['specialization'] ?? null,
-                'login_at'       => time(),
-            ];
-
-            redirect('/dashboard/index'); // <- accueil connecté
-            exit;
-
-        } catch (Throwable $e) {
-            error_log($e->getMessage());
-            $errors[] = "Erreur interne. Réessaie plus tard.";
-        }
-
-        return $errors;
-    }
-
-    public function handleLogoutAndRedirect(): void
-    {
-        if (($_SERVER['REQUEST_METHOD'] ?? 'GET') !== 'POST') {
-            http_response_code(405);
-            echo 'Méthode non autorisée';
-            return;
-        }
-
-        Csrf::requireValid('/auth/login');
-
-        $_SESSION = [];
-        if (ini_get('session.use_cookies')) {
-            $params = session_get_cookie_params();
-            setcookie(session_name(), '', [
-                'expires'  => time() - 42000,
-                'path'     => $params['path'],
-                'domain'   => $params['domain'],
-                'secure'   => $params['secure'],
-                'httponly' => $params['httponly'],
-                'samesite' => $params['samesite'] ?? 'Lax',
-            ]);
-        }
-        if (session_status() === PHP_SESSION_ACTIVE) {
-            session_destroy();
-        }
-        
-        Flash::set('success', 'Vous êtes maintenant déconnecté.');
-        redirect('/auth/login');
-        exit;
-    }
-
-    public function handleRegisterAndRedirect(): void
+   
+    public function store(): void
     {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             http_response_code(405);
@@ -283,7 +200,7 @@ final class AuthController
 
         if ($errors) {
             Flash::set('errors', $errors);
-            redirect('/auth/register');
+            Http::redirect('/auth/register');
             return;
         }
 
@@ -300,13 +217,13 @@ final class AuthController
             }
             if ($existsErr) {
                 Flash::set('errors', $existsErr);
-                redirect('/auth/register');
+                Http::redirect('/auth/register');
                 return;
             }
         } catch (Throwable $e) {
             error_log('[Register] uniqueness check error: ' . $e->getMessage());
             $_SESSION['errors'] = ['Erreur interne lors de la vérification des doublons.'];
-            redirect('/auth/register');
+            Http::redirect('/auth/register');
             return;
         }
 
@@ -315,7 +232,7 @@ final class AuthController
         // -----------------------------
         if (!defined('PASSWORD_ARGON2ID')) {
             Flash::set('errors', ['Le serveur ne supporte pas Argon2id.']);
-            redirect('/auth/register');
+            Http::redirect('/auth/register');
             return;
         }
 
@@ -324,7 +241,7 @@ final class AuthController
             // Si jamais l’implémentation retourne un format inattendu, on bloque (la DB refusera).
             error_log('[Register] Argon2id hash does not match PHC format: ' . var_export($hash, true));
             Flash::set('errors', ['Erreur interne lors du hachage du mot de passe.']);
-            redirect('/auth/register');
+            Http::redirect('/auth/register');
             return;
         }
 
@@ -344,7 +261,7 @@ final class AuthController
             Flash::set('success', 'Compte créé avec succès, vous pouvez vous connecter.');
             // Option: auto-login
             // $_SESSION['user_id'] = $userId;
-            redirect('/auth/login');
+            Http::redirect('/auth/login');
             return;
 
         } catch (PDOException $e) {
@@ -355,19 +272,19 @@ final class AuthController
                 if (stripos($msg, 'username') !== false) $human = 'Ce nom d’utilisateur est déjà utilisé.';
                 if (stripos($msg, 'email')    !== false) $human = 'Cet email est déjà utilisé.';
                 Flash::set('errors', [$human]);
-                redirect('/auth/register');
+                Http::redirect('/auth/register');
                 return;
             }
 
             error_log('[Register] DB error: ' . $e->getMessage());
             Flash::set('errors', ['Erreur interne lors de la création du compte.']);
-            redirect('/auth/register');
+            Http::redirect('/auth/register');
             return;
 
         } catch (Throwable $e) {
             error_log('[Register] Fatal: ' . $e->getMessage());
             Flash::set('errors', ['Erreur interne inattendue.']);
-            redirect('/auth/register');
+            Http::redirect('/auth/register');
             return;
         }
     }
