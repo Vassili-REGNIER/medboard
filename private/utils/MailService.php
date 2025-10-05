@@ -23,7 +23,7 @@ final class MailService
         $this->mail->Username   = getenv('SMTP_USERNAME');
         $this->mail->Password   = getenv('SMTP_PASSWORD');
         $this->mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
-        $this->mail->Port       = 465;
+        $this->mail->Port       = 587;
 
         // Réglages de base
         $this->mail->CharSet = 'UTF-8';
