@@ -276,7 +276,7 @@ L’application Medboard a été développée en suivant les bonnes pratiques de
 | **A05 – Mauvaise configuration de sécurité** | Fichiers exposés, erreurs visibles | Dossier `/private/` non accessible, `display_errors=0` en prod, variables d’environnement isolées |
 | **A06 – Composants vulnérables et obsolètes** | Libs non maintenues | **Composer** pour la gestion des dépendances, **PHPMailer** à jour, vérification CVE avant déploiement |
 | **A07 – Authentification faible** | Sessions prévisibles, login non protégé | Sessions régénérées (`session_regenerate_id(true)`), contrôle du couple identifiant/mot de passe, CSRF actif |
-| **A08 – Manque d’intégrité** | Données modifiées ou non vérifiées | Validation forte côté serveur, hash du token de réinitialisation, triggers SQL de normalisation |
+| **A08 – Manque d’intégrité** | Données modifiées ou non vérifiées | Validation forte côté serveur & BD, hash du token de réinitialisation, triggers SQL de normalisation |
 | **A09 – Journalisation insuffisante** | Pas de traçabilité | `error_log()` utilisé pour toutes les erreurs critiques (sans fuite d’infos sensibles) |
 | **A10 – Falsification côté serveur (SSRF)** | Appels HTTP non filtrés | Aucune requête externe depuis les entrées utilisateur, hôtes SMTP/DB définis par variable d’environnement |
 
