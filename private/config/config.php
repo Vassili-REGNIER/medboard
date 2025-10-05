@@ -2,7 +2,7 @@
 
 // Chemins de base
 define('MODULES_PATH', dirname(__DIR__) . DIRECTORY_SEPARATOR . 'modules' . DIRECTORY_SEPARATOR);
-define('BASE_PATH', dirname(__DIR__, 2));
+define('BASE_PATH', dirname(__DIR__, 2) . DIRECTORY_SEPARATOR);
 
 // Config DB
 define("DB_HOST", getenv("DB_HOST"));
