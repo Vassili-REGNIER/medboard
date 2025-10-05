@@ -1,39 +1,124 @@
-# DashMed — Tableau de bord adaptatif pour le suivi de patients
+# 🩺 Medboard — Tableau de bord adaptatif pour le suivi de patients
 
-## Projet scolaire — développement full PHP
-Contributeurs : **Vassili Régnier, Jérémy Watripont, Alexis Barberis**
+## 👨‍💻 Projet scolaire — Développement full PHP (IUT Aix-Marseille, S3)
 
-### Description
+**Contributeurs :**  
+Vassili Régnier — Jérémy Watripont — Alexis Barberis  
 
-DashMed est une application web (PHP, MVC) qui permet le suivi de patients via un tableau de bord adaptatif :
+---
 
-- stockage des observations (séries temporelles d’indicateurs),
+## 🧩 Description
 
-- affichage de graphiques pour indicateurs présélectionnés,
+**Medboard** est une application web développée en **PHP orienté objet (architecture MVC)**.  
+Elle permet à des professionnels de santé de suivre leurs patients via un tableau de bord interactif et sécurisé.
 
-- enregistrement des préférences d’affichage par médecin,
+L’objectif est de proposer une application :
+- conforme aux bonnes pratiques **OWASP Top 10 (2021)**,
+- respectueuse de la **sécurité des données** et de la **cryptographie moderne**,
+- et déployée sur un hébergement **AlwaysData**.
 
-- gestion de seuils d’alerte et génération d’alertes,
+---
 
-- prototype de recommandation d’indicateurs via ML.
+## ⚙️ Architecture du projet
 
-Ce README fournit les instructions pour installer, développer et livrer le projet.
+- **Langage :** PHP 8.2  
+- **Base de données :** PostgreSQL  
+- **Pattern :** MVC orienté objet  
+- **Modèles :** PDO avec requêtes préparées  
+- **Sécurité :** Vérifications CSRF, validations `Inputs`, hashage Argon2id  
+- **Hébergement :** AlwaysData (PHP + PostgreSQL + SMTP)  
+- **Outils :** Composer, PHPMailer, GitHub, Figma  
 
+---
 
+## 📦 Installation locale
 
+### 1️⃣ Cloner le projet
+```bash
+git clone git@github.com:Vassili-REGNIER/medboard.git
+cd medboard
+```
 
-Script de création de la base de donnée : 
+### 2️⃣ Créer la base PostgreSQL
+Exécute le script SQL fourni dans ce README (section suivante) pour créer les tables :
+- `specializations`
+- `users`
+- `password_resets`
+
+### 3️⃣ Configurer les variables d’environnement
+Créer un fichier `.env` à la racine du projet :
+```env
+DB_HOST=postgresql-<toncompte>.alwaysdata.net
+DB_NAME=<nom_bdd>
+DB_USER=<user>
+DB_PASS=<mot_de_passe>
+
+SMTP_HOST=smtp-alwaysdata.com
+SMTP_USERNAME=<ton_email_alwaysdata>
+SMTP_PASSWORD=<mot_de_passe>
+SMTP_FROM_EMAIL=<adresse_expediteur>
+SMTP_FROM_NAME="medboard"
+```
+
+### 4️⃣ Lancer le serveur local
+```bash
+php -S localhost:8000 -t public
+```
+
+Ouvre ensuite ton navigateur sur [http://localhost:8000](http://localhost:8000)
+
+---
+
+## ☁️ Déploiement sur AlwaysData
+
+### 1️⃣ Création du site
+- Connecte-toi sur [https://admin.alwaysdata.com](https://admin.alwaysdata.com)
+- Crée un **site web PHP**
+- Indique le **répertoire racine :** `/www`
+
+### 2 Cloner le projet
+
+- Connecte toi sur ton serveur alwaysdata en ssh
+```bash
+ssh [utilisateur]@ssh-[compte].alwaysdata.net 
+```
+
+- Clone le projet
+```bash
+cd ~/
+git clone git@github.com:Vassili-REGNIER/medboard.git
+```
+
+### 3 Base de données PostgreSQL
+- Dans **Base de données → PostgreSQL**, crée une nouvelle base.
+- Importer le script SQL du projet.
+
+### 4 Définir les variables d’environnement
+Depuis **Web → Sites → Modifier → Variables d'environnement**, ajoute les variables suivantes :
+```
+DB_HOST
+DB_NAME
+DB_USER
+DB_PASS
+SMTP_HOST
+SMTP_USERNAME
+SMTP_PASSWORD
+SMTP_FROM_EMAIL
+SMTP_FROM_NAME
+```
+
+### 5 Créer une adresse mail AlwaysData
+- Ouvre **E-mail → Comptes → Ajouter un compte**
+- Utilise le SMTP `smtp-alwaysdata.com` sur le port `465` (TLS) ou `587` (STARTTLS)
+- Renseigne cette adresse dans `MailService.php` pour l’envoi d’e-mails (mot de passe oublié, notifications).
+
+---
+
+## 🧱 Script SQL — Création des tables
+
+> (Script conforme à PostgreSQL)
 
 ```sql
--- ============================================================================
--- PostgreSQL — Medical supervision DB (lowercase-only inputs, no CITEXT)
--- ============================================================================
-
--- 0) Nettoyage idempotent
-DROP TABLE IF EXISTS users CASCADE;
-DROP TABLE IF EXISTS specializations CASCADE;
-
--- 1) Table de référence des spécialités (liste réduite)
 CREATE TABLE specializations (
     specialization_id INT GENERATED ALWAYS AS IDENTITY,
     name_en           VARCHAR(64) NOT NULL UNIQUE,
@@ -47,7 +132,6 @@ CREATE TABLE specializations (
     CONSTRAINT ck_name_en_chars     CHECK (name_en ~ '^[a-zà-öø-ÿ'' _-]+$')
 );
 
--- Liste réduite, non exhaustive (en anglais, déjà en minuscules)
 INSERT INTO specializations (name_en) VALUES
     ('cardiology'),
     ('general_practice'),
@@ -62,7 +146,6 @@ INSERT INTO specializations (name_en) VALUES
     ('urology'),
     ('gastroenterology');
 
--- 2) Table users
 CREATE TABLE users (
     user_id           INT GENERATED ALWAYS AS IDENTITY,
     firstname         VARCHAR(32)  NOT NULL,
@@ -150,17 +233,6 @@ BEFORE INSERT OR UPDATE ON specializations
 FOR EACH ROW
 EXECUTE FUNCTION specializations_normalize();
 
--- 5) (Option) Index utiles
--- CREATE INDEX idx_users_username ON users (username);
--- CREATE INDEX idx_users_email    ON users (email);
--- CREATE INDEX idx_users_spec     ON users (specialization_id);
-
--- ============================================================================
--- Fin du script
--- ============================================================================
- 
-
--- Table pour gérer les demandes de réinitialisation de mot de passe
 -- Table pour gérer les demandes de réinitialisation de mot de passe
 CREATE TABLE public.password_resets (
     id          BIGSERIAL PRIMARY KEY,
@@ -187,3 +259,75 @@ CREATE INDEX ix_password_resets_user_id
     ON public.password_resets (user_id);
 
 ```
+
+---
+
+## 🔒 Sécurité et conformité OWASP Top 10 (2021)
+
+L’application Medboard a été développée en suivant les bonnes pratiques de sécurité du **Top 10 OWASP (2021)**.  
+
+| OWASP | Vulnérabilité | Mesures appliquées |
+|-------|----------------|--------------------|
+| **A01 – Contrôles d’accès défaillants** | Accès non autorisé | Vérifications `Auth::requireGuest()` / `Auth::requireUser()`, routes protégées, sessions sécurisées |
+| **A02 – Défaillances cryptographiques** | Hachage faible ou données sensibles en clair | `password_hash()` avec **Argon2id**, tokens de reset hashés (SHA-256) et expirant après 30 min |
+| **A03 – Injection** | SQL injection | Toutes les requêtes SQL passent par des **requêtes préparées PDO** |
+| **A04 – Conception non sécurisée** | Absence de validations | Entrées validées par `Inputs.php` (regex, longueurs, typage), logique PRG sur tous les formulaires |
+| **A05 – Mauvaise configuration de sécurité** | Fichiers exposés, erreurs visibles | Dossier `/private/` non accessible, `display_errors=0` en prod, variables d’environnement isolées |
+| **A06 – Composants vulnérables et obsolètes** | Libs non maintenues | **Composer** pour la gestion des dépendances, **PHPMailer** à jour, vérification CVE avant déploiement |
+| **A07 – Authentification faible** | Sessions prévisibles, login non protégé | Sessions régénérées (`session_regenerate_id(true)`), contrôle du couple identifiant/mot de passe, CSRF actif |
+| **A08 – Manque d’intégrité** | Données modifiées ou non vérifiées | Validation forte côté serveur, hash du token de réinitialisation, triggers SQL de normalisation |
+| **A09 – Journalisation insuffisante** | Pas de traçabilité | `error_log()` utilisé pour toutes les erreurs critiques (sans fuite d’infos sensibles) |
+| **A10 – Falsification côté serveur (SSRF)** | Appels HTTP non filtrés | Aucune requête externe depuis les entrées utilisateur, hôtes SMTP/DB définis par variable d’environnement |
+
+---
+
+### 🔐 Protection contre les attaques CSRF
+
+Bien que le CSRF ne soit plus une catégorie distincte depuis 2021, il est couvert par **A01** et **A05**.
+
+**Mesures mises en œuvre :**
+- Génération d’un **token CSRF unique par formulaire et par route**.  
+- Vérification systématique avec `Csrf::requireValid()`.  
+- Rejet immédiat des requêtes POST sans token valide.  
+- **Cookies `HttpOnly` et `SameSite=Strict`** pour limiter les attaques cross-site.  
+- **Renouvellement du token** à chaque session utilisateur.  
+
+---
+
+## 🧰 Bonnes pratiques techniques
+
+- Validation côté client (HTML5 + attributs `required`, `pattern`, `minlength`).
+- Validation/Nettoyage systématique côté serveur avec la classe `Inputs`.
+- Encodage des sorties (`htmlspecialchars`) pour prévenir les injections XSS.
+- Séparation stricte des responsabilités (Modèles / Contrôleurs / Vues).
+- Redirections sécurisées (`Http::redirect()`).
+- Désactivation des index de répertoires sur le serveur.
+
+---
+
+## 🧪 Qualité du code et tests
+
+- **Validation W3C :** HTML5 et CSS3  
+- **Analyse statique :** PHPStan  
+- **Documentation :** PHPDoc complète  
+- **Tests :** scénarios fonctionnels (connexion, inscription, mot de passe oublié, etc.)  
+- **Compatibilité navigateurs :** Chrome, Firefox, Safari  
+- **CI/CD :** en préparation (GitHub Actions)
+
+---
+
+## 🎓 Respect des consignes du projet
+
+- Architecture **MVC** claire et complète  
+- Pages obligatoires : Accueil, Connexion, Inscription, Mot de passe oublié, Mentions légales, Plan du site  
+- Responsivité (mobile / tablette / desktop)  
+- Hébergement **AlwaysData** fonctionnel  
+- Respect des bonnes pratiques **OWASP**, **éco-conception** et **accessibilité**  
+- Validation W3C et configuration serveur sécurisée  
+
+---
+
+## 🧾 Licence
+
+Projet scolaire — Licence libre d’étude (usage académique uniquement).  
+© 2025 — Régnier, Watripont & Barberis.
