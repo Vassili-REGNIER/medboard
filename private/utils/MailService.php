@@ -23,14 +23,14 @@ final class MailService
         $this->mail->Username   = getenv('SMTP_USERNAME');
         $this->mail->Password   = getenv('SMTP_PASSWORD');
         $this->mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
-        $this->mail->Port       = 587;
+        $this->mail->Port       = 465;
 
         // Réglages de base
         $this->mail->CharSet = 'UTF-8';
         $this->mail->isHTML(true);
         $this->mail->setFrom(
-            getenv('SMTP_FROM_EMAIL') ?: 'no-reply@tondomaine.fr',
-            getenv('SMTP_FROM_NAME') ?: 'MedBoard'
+            getenv('SMTP_FROM_EMAIL'),
+            getenv('SMTP_FROM_NAME')
         );
     }
 
