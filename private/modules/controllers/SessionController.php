@@ -46,42 +46,43 @@ final class SessionController
 
     /**
      * Tente la connexion via un login (email OU username) + mot de passe.
-     * Si succès: ouvre la session et REDIRIGE vers l'accueil connecté ('/').
-     * Si échec: retourne un tableau d'erreurs (et ne redirige pas).
      */
     public function store(): array
     {
-        Csrf::requireValid('/auth/login'); // si CSRF invalide → redirect direct
-
-        $errors = [];
+        Csrf::requireValid('/auth/login');
 
         $login    = trim((string) ($_POST['login'] ?? null));
         $password = (string) ($_POST['password'] ?? null);
 
         if ($login === '' || $password === '') {
-            return ["Identifiants requis."];
+            Flash::set('errors', ['Identifiants requis.']);
+            Flash::set('old', ['login' => $login]);
+            Http::redirect('/auth/login');
+            exit;
         }
 
-        // Normaliser en lowercase.
         $login = mb_strtolower($login);
 
         try {
-            $user = $this->userModel ->findByLogin($login);
+            $user = $this->userModel->findByLogin($login);
             if (!$user) {
-                return ["Identifiants invalides."];
+                Flash::set('errors', ['Identifiants invalides.']);
+                Flash::set('old', ['login' => $login]);
+                Http::redirect('/auth/login');
+                exit;
             }
 
             $hash = (string)($user['password_hash'] ?? '');
             if ($hash === '' || !password_verify($password, $hash)) {
-                return ["Identifiants invalides."];
+                Flash::set('errors', ['Identifiants invalides.']);
+                Flash::set('old', ['login' => $login]);
+                Http::redirect('/auth/login');
+                exit;
             }
 
-            // Rehash éventuel en tâche courte (sécurité évolutive)
-            $this->userModel ->maybeRehashPassword((int)$user['id'], $password, $hash);
+            $this->userModel->maybeRehashPassword((int)$user['id'], $password, $hash);
 
-            // Session + redirection
             session_regenerate_id(true);
-
             $_SESSION['user'] = [
                 'user_id'        => (int)$user['user_id'],
                 'firstname'      => $user['firstname'] ?? null,
@@ -92,16 +93,18 @@ final class SessionController
                 'login_at'       => time(),
             ];
 
-            Http::redirect('/dashboard/index'); // <- accueil connecté
+            Http::redirect('/dashboard/index');
             exit;
 
         } catch (Throwable $e) {
             error_log($e->getMessage());
-            $errors[] = "Erreur interne. Réessaie plus tard.";
+            Flash::set('errors', ['Erreur interne. Réessaie plus tard.']);
+            Flash::set('old', ['login' => $login]);
+            Http::redirect('/auth/login');
+            exit;
         }
-
-        return $errors;
     }
+
 
     public function destroy(): void
     {

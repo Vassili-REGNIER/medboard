@@ -102,13 +102,13 @@ final class PasswordsController
             return;
         }
 
-        // 6) Construction du lien (sans stocker le token en clair)
+        // 6) Construction du lien
         $scheme = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
         $host   = $_SERVER['HTTP_HOST'] ?? 'localhost';
         $uid    = (int)$user['user_id'];
 
         $resetLink = sprintf(
-            '%s://%s/reset-password?token=%s&uid=%d',
+            '%s://%s/auth/reset-password?token=%s&uid=%d',
             $scheme,
             $host,
             $plainToken,
@@ -117,7 +117,7 @@ final class PasswordsController
 
         // 7) Envoi e-mail via un service
         try {
-            $mailer = new MailService(); // à créer si absent (wrapper PHPMailer)
+            $mailer = new MailService();
             $subject = 'Réinitialisation de votre mot de passe';
             $html = <<<HTML
                 <p>Bonjour,</p>

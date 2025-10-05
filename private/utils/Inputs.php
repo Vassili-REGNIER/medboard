@@ -21,11 +21,8 @@ final class Inputs
         return trim($s);
     }
 
-    public static function sanitizeString(
-        string $s,
-        bool $lower = false,
-        bool $collapseSpaces = true
-    ): string {
+    public static function sanitizeString(string $s, bool $lower = false, bool $collapseSpaces = true): string 
+    {
         $s = trim($s ?? '');
         if ($collapseSpaces) {
             $s = self::collapseSpaces($s);
@@ -36,12 +33,8 @@ final class Inputs
         return $s;
     }
 
-    public static function validateLength(
-        string $s,
-        ?int $min = null,
-        ?int $max = null,
-        string $label = 'La valeur'
-    ): ?string {
+    public static function validateLength(string $s, ?int $min = null, ?int $max = null, string $label = 'La valeur'): ?string 
+    {
         $len = mb_strlen($s, 'UTF-8');
         if ($min !== null && $len < $min) {
             return "$label doit faire au moins $min caractères.";

@@ -31,11 +31,6 @@
       </div>
     <?php endif; ?>
 
-    <?php
-      // Le contrôleur peut avoir passé $errors OU $errs ; on harmonise localement si besoin
-      if (!isset($errors) && isset($errs)) { $errors = $errs; }
-    ?>
-
     <?php if (!empty($errors['global'])): ?>
       <div class="notice error" role="alert">
         <?= htmlspecialchars(is_array($errors['global']) ? implode(' ', $errors['global']) : $errors['global'], ENT_QUOTES, 'UTF-8') ?>
