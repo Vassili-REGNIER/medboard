@@ -6,11 +6,11 @@ spl_autoload_register(function (string $class): void {
 
     $paths = [
         // Modules MVC
-        $modulesPath . 'controllers' . DIRECTORY_SEPARATOR . $class . '.php',
-        $modulesPath . 'models' . DIRECTORY_SEPARATOR . $class . '.php',
+        $modulesPath . 'controllers/' . $class . '.php',
+        $modulesPath . 'models/' . $class . '.php',
 
         // Outils internes
-        $baseDir . '/private/utils' . $class . '.php',
+        $baseDir . 'private/utils/' . $class . '.php',
     ];
 
     foreach ($paths as $file) {

@@ -1,7 +1,7 @@
 <?php
 
 // Chemins de base
-define('MODULES_PATH', dirname(__DIR__) . '/modules/');
+define('MODULES_PATH', dirname(__DIR__) . DIRECTORY_SEPARATOR . 'modules' . DIRECTORY_SEPARATOR);
 define('BASE_PATH', dirname(__DIR__, 2));
 
 // Config DB

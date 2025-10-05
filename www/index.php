@@ -6,7 +6,7 @@ session_start();
 
 /**
  * Chargements : autoloader (connait déjà "modules\"),
- * config générale (définit notamment MODULES_PATH, BASE_URL éventuelle),
+ * config générale (définit notamment MODULES_PATH),
  * et table des routes.
  */
 require __DIR__ . '/../private/config/config.php';
