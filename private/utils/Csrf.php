@@ -32,7 +32,7 @@ final class Csrf
                 Flash::set('old', $_POST);
             }
             Http::redirect($redirectUrl);
-            exit; // On sort tout de suite
+            exit;
         }
     }
 }

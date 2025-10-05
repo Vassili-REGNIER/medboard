@@ -32,14 +32,13 @@ if (!isset($routes[$route])) {
 
 [$class, $method, $requiresAuth] = $routes[$route];
 
-/** ==================== Garde d'auth si requis ==================== */
 if ($requiresAuth === true) {
     Auth::requireLogin();
 }
 
 /** ==================== Instanciation & exécution ==================== */
 try {
-    // Chargement automatique via autoloader (sans namespace).
+    // Vérification du contrôleur
     if (!class_exists($class)) {
         http_response_code(500);
         echo '500 — Classe contrôleur introuvable : ' . htmlspecialchars($class, ENT_QUOTES, 'UTF-8');
@@ -54,7 +53,6 @@ try {
         exit;
     }
 
-    // Appel simple sans paramètres
     $controller->{$method}();
 
 } catch (Throwable $e) {
@@ -62,20 +60,19 @@ try {
     http_response_code(500);
     echo '500 — Erreur interne';
 
-    // ==== Debug en DEV (à désactiver en prod) ====
-    echo '<hr><strong>[Debug Exception]</strong><br>';
-    echo 'Type : ' . get_class($e) . '<br>';
-    echo 'Message : ' . htmlspecialchars($e->getMessage(), ENT_QUOTES, 'UTF-8') . '<br>';
-    echo 'Fichier : ' . htmlspecialchars($e->getFile(), ENT_QUOTES, 'UTF-8') . '<br>';
-    echo 'Ligne : ' . $e->getLine() . '<br>';
-    echo '<pre>Trace : ' . htmlspecialchars($e->getTraceAsString(), ENT_QUOTES, 'UTF-8') . '</pre>';
-    
-    // Affichage de la route qui a été résolue :
-    echo '<hr><strong>[Debug Route]</strong><br>';
-    echo 'Route demandée : ' . htmlspecialchars($route, ENT_QUOTES, 'UTF-8') . '<br>';
-    echo 'Classe attendue : ' . htmlspecialchars($class, ENT_QUOTES, 'UTF-8') . '<br>';
-    echo 'Méthode attendue : ' . htmlspecialchars($method, ENT_QUOTES, 'UTF-8') . '<br>';
-    echo 'Authentification requise : ' . ($requiresAuth ? 'oui' : 'non') . '<br>';
-
+    // Journalisation complète
+    $logMessage = sprintf(
+        "[%s] Exception non interceptée\nType: %s\nMessage: %s\nFichier: %s:%d\nRoute: %s\nClasse: %s\nMéthode: %s\nTrace:\n%s\n",
+        date('Y-m-d H:i:s'),
+        get_class($e),
+        $e->getMessage(),
+        $e->getFile(),
+        $e->getLine(),
+        $route ?? '(inconnue)',
+        $class ?? '(inconnue)',
+        $method ?? '(inconnue)',
+        $e->getTraceAsString()
+    );
+    error_log($logMessage);
     exit;
 }
