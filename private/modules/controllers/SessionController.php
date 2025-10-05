@@ -37,7 +37,7 @@ final class SessionController
         }
     }
     
-    public function create() {
+    public function create(): void {
         Auth::requireGuest(); // Si l'utilisateur est deja connecté -> /dashboard/index
 
         [$old, $errors, $success] = array_values(Flash::consumeMany(['old','errors','success']));
@@ -47,7 +47,7 @@ final class SessionController
     /**
      * Tente la connexion via un login (email OU username) + mot de passe.
      */
-    public function store(): array
+    public function store(): void
     {
         Csrf::requireValid('/auth/login');
 
@@ -80,8 +80,8 @@ final class SessionController
                 exit;
             }
 
-            $this->userModel->maybeRehashPassword((int)$user['id'], $password, $hash);
-
+            // Succès
+            $this->userModel->maybeRehashPassword((int)$user['user_id'], $password, $hash);
             session_regenerate_id(true);
             $_SESSION['user'] = [
                 'user_id'        => (int)$user['user_id'],
