@@ -97,9 +97,11 @@ git clone git@github.com:Vassili-REGNIER/medboard.git
 Depuis **Web → Sites → Modifier → Variables d'environnement**, ajoute les variables suivantes :
 ```
 DB_HOST
-DB_NAME
+DB_PORT
 DB_USER
 DB_PASS
+DB_NAME
+DB_CHARSET
 SMTP_HOST
 SMTP_USERNAME
 SMTP_PASSWORD
@@ -109,9 +111,8 @@ SMTP_FROM_NAME
 
 ### 5 Créer une adresse mail AlwaysData
 - Ouvre **E-mail → Comptes → Ajouter un compte**
-- Utilise le SMTP `smtp-alwaysdata.com` sur le port `465` (TLS) ou `587` (STARTTLS)
+- Utilise le SMTP `smtp-alwaysdata.com` sur le port `587` (STARTTLS)
 - Renseigne cette adresse dans `MailService.php` pour l’envoi d’e-mails (mot de passe oublié, notifications).
-
 ---
 
 ## 🧱 Script SQL — Création des tables

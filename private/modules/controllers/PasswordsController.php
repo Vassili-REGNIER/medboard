@@ -1,6 +1,5 @@
 <?php
 declare(strict_types=1);
-require_once BASE_PATH . "/private/utils/MailService.php";
 
 final class PasswordsController
 {
@@ -143,7 +142,6 @@ final class PasswordsController
         Http::redirect('/auth/forgot-password');
         return;
     }
-
 
     public function edit()
     {
