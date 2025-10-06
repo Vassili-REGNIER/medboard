@@ -1,0 +1,6 @@
+User-agent: *
+Disallow: /auth/
+Disallow: /dashboard/
+Allow: /
+
+Sitemap: https://medboard.alwaysdata.net/sitemap.xml

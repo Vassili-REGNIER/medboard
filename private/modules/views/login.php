@@ -7,6 +7,7 @@
   <meta charset="utf-8">
   <title>Connexion</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
   <style>
     body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; margin: 2rem; }
     .container { max-width: 480px; margin: 0 auto; }

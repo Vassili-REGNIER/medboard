@@ -4,6 +4,7 @@
   <meta charset="utf-8">
   <title>Réinitialiser le mot de passe</title>
   <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
   <style>
     body{font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;margin:0;color:#222}
     .wrap{max-width:520px;margin:6rem auto;padding:0 1rem}
