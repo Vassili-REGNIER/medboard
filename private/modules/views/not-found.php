@@ -3,37 +3,36 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Réinitialisez votre mot de passe MedBoard en toute sécurité">
+    <meta name="description" content="Page non trouvée - La page que vous recherchez n'existe pas ou a été déplacée">
     <meta name="robots" content="noindex, nofollow">
-    <title>Mot de passe oublié - MedBoard</title>
+    <title>Erreur 404 - MedBoard</title>
     <link rel="icon" type="image/svg+xml" href="/_assets/images/favicon.svg">
     <link rel="icon" type="image/x-icon" href="/_assets/images/favicon.ico">
     <link rel="stylesheet" href="/_assets/css/styles.css">
 </head>
-<body class="light-theme">
+<body class="light-theme error-page-body">
     <!-- Header -->
     <header class="header">
         <div class="container">
             <a href="/site/home" class="logo">
-                <img src="/_assets/images/LogoMedBoard.svg" alt="MedBoard" class="logo-light">
-                <img src="/_assets/images/LogoMedBoardDarkMode.svg" alt="MedBoard" class="logo-dark">
+                <img src="/_assets/images/LogoMedBoardDarkMode.svg" alt="MedBoard" class="logo-404">
             </a>
-            
+
             <nav class="nav">
                 <a href="/site/home" class="nav-link">Accueil</a>
                 <a href="/site/sitemap" class="nav-link">Plan du site</a>
                 <a href="/site/legal" class="nav-link">Mentions légales</a>
             </nav>
-            
+
             <div class="header-actions">
                 <button class="btn-icon" id="themeToggle" aria-label="Changer le thème">
-                    <img src="/_assets/images/lune.svg" alt="" class="moon-icon" aria-hidden="true">
-                    <img src="/_assets/images/soleil.svg" alt="" class="sun-icon" aria-hidden="true">
+                    <img src="/_assets/images/lune-v2.svg" alt="" class="moon-icon-404" aria-hidden="true">
+                    <img src="/_assets/images/soleil.svg" alt="" class="sun-icon-404" aria-hidden="true">
                 </button>
                 <a href="/auth/login" class="btn-text">Se connecter</a>
                 <a href="/auth/register" class="btn-primary">Créer un compte</a>
             </div>
-            
+
             <!-- Mobile Menu Toggle -->
             <button class="mobile-menu-toggle" id="mobileMenuToggle" aria-label="Ouvrir le menu" aria-expanded="false">
                 <span class="hamburger">
@@ -49,12 +48,10 @@
     <div class="mobile-menu" id="mobileMenu">
         <div class="mobile-menu-header">
             <a href="/site/home" class="logo">
-                <img src="/_assets/images/LogoMedBoard.svg" alt="MedBoard" class="logo-light">
-                <img src="/_assets/images/LogoMedBoardDarkMode.svg" alt="MedBoard" class="logo-dark">
+                <img src="/_assets/images/LogoMedBoardDarkMode.svg" alt="MedBoard" class="logo-404">
             </a>
             <button class="mobile-menu-close" id="mobileMenuClose" aria-label="Fermer le menu">
-                <img src="/_assets/images/croix-light.svg" alt="" class="close-icon-light" aria-hidden="true">
-                <img src="/_assets/images/croix-dark.svg" alt="" class="close-icon-dark" aria-hidden="true">
+                <img src="/_assets/images/croix-dark.svg" alt="" class="close-icon-404" aria-hidden="true">
             </button>
         </div>
 
@@ -68,9 +65,9 @@
 
             <div class="mobile-menu-theme">
                 <span class="mobile-menu-theme-label">Thème</span>
-                <button class="mobile-theme-toggle" id="mobileThemeToggle" aria-label="Changer le thème">
-                    <img src="/_assets/images/lune.svg" alt="" class="mobile-moon-icon" aria-hidden="true">
-                    <img src="/_assets/images/soleil.svg" alt="" class="mobile-sun-icon" aria-hidden="true">
+                <button class="mobile-theme-toggle" id="mobileThemeToggle">
+                    <img src="/_assets/images/lune.svg" alt="" class="mobile-moon-icon-404" aria-hidden="true">
+                    <img src="/_assets/images/soleil.svg" alt="" class="mobile-sun-icon-404" aria-hidden="true">
                     <span class="mobile-theme-text">Sombre</span>
                 </button>
             </div>
@@ -83,39 +80,38 @@
     </div>
 
     <main>
-        <!-- Forgot Password Section -->
-        <section class="signup-section">
-            <div class="signup-container-centered">
-                <!-- Back link -->
-                <a href="/site/home" class="back-link">
+        <div class="error-page">
+            <div class="error-container">
+                <a href="/site/home" class="error-top-link">
                     <img src="/_assets/images/fleche-gauche.svg" alt="Retour">
-                    Retour à l'accueil
+                    Échapper à cette dimension
                 </a>
 
-                <!-- Forgot Password Card -->
-                <div class="signup-card-centered">
-                    <div class="signup-header">
-                        <h1 class="signup-title">Mot de passe oublié</h1>
-                        <p class="signup-subtitle">Saisissez votre adresse email pour recevoir un lien de réinitialisation</p>
+                <div class="error-card">
+                    <div class="error-hero">
+                        <span class="error-status">ERROR 404</span>
+                        <span class="error-separator">•</span>
+                        <span class="error-status">Vous êtes dans une zone interdite</span>
                     </div>
 
-                    <form class="signup-form">
-                        <div class="form-group">
-                            <label for="email" class="form-label">Adresse email</label>
-                            <input type="email" id="email" class="form-input" placeholder="votre.email@example.com" autocomplete="email" required>
-                        </div>
+                    <div class="error-image">
+                        <picture>
+                            <source srcset="/_assets/images/error-404.avif" type="image/avif">
+                            <source srcset="/_assets/images/error-404.webp" type="image/webp">
+                            <img src="/_assets/images/error-404.jpg" alt="Erreur 404">
+                        </picture>
+                    </div>
 
-                        <button type="submit" class="btn-submit">Envoyer le lien</button>
-
-                        <div class="signup-footer">
-                            <p class="signup-link-text">
-                                Vous vous souvenez de votre mot de passe ? <a href="/auth/login" class="form-link">Se connecter</a>
-                            </p>
+                    <div class="error-alert">
+                        <div class="alert-title">⚠️ AVERTISSEMENT SYSTÈME ⚠️</div>
+                        <p>Cette page a été corrompue par une entité inconnue.</p>
+                        <div class="error-meta">
+                            <span>STATUS : 404</span>
                         </div>
-                    </form>
+                    </div>
                 </div>
             </div>
-        </section>
+        </div>
     </main>
 
     <!-- Footer -->
@@ -124,8 +120,7 @@
             <div class="footer-content">
                 <div class="footer-col">
                     <a href="/site/home" class="logo">
-                        <img src="/_assets/images/LogoMedBoard.svg" alt="MedBoard" class="logo-light">
-                        <img src="/_assets/images/LogoMedBoardDarkMode.svg" alt="MedBoard" class="logo-dark">
+                        <img src="/_assets/images/LogoMedBoardDarkMode.svg" alt="MedBoard" class="logo-404">
                     </a>
                     <p class="footer-description">
                         La plateforme médicale nouvelle génération<br>
@@ -174,7 +169,5 @@
     </footer>
 
     <script src="/_assets/js/common.js" defer></script>
-    <script src="/_assets/js/forgot-password.js" defer></script>
 </body>
 </html>
-

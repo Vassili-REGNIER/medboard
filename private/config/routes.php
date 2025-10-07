@@ -7,6 +7,8 @@ return [
     'site/home'            => ['StaticPagesController',  'home',   false],
     'site/sitemap'         => ['StaticPagesController',  'sitemap',  false],
     'site/legal'           => ['StaticPagesController',  'legal',    false],
+    'site/privacy'         => ['StaticPagesController',  'privacy', false],
+    'site/not-found'       => ['StaticPagesController',  'notFound', false],
 
     // Connexion / déco
     'auth/login'           => ['SessionController',      'login',    false],

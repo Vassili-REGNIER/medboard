@@ -15,4 +15,14 @@ final class StaticPagesController
     {
         require __DIR__ . '/../views/legal.php';
     }
+
+    public function privacy(): void
+    {
+        require __DIR__ . '/../views/privacy.php';
+    }
+
+    public function notFound(): void
+    {
+        require __DIR__ . '/../views/not-found.php';
+    }
 }
