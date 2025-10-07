@@ -1,0 +1,44 @@
+# robots.txt pour MedBoard
+# Site: https://medboard.alwaysdata.net
+# Dernière mise à jour: 2025-10-07
+
+User-agent: *
+
+# Pages publiques autorisées
+Allow: /home.html
+Allow: /sitemap.html
+Allow: /mentions-legales.html
+Allow: /politique-confidentialite.html
+
+# Autoriser les ressources publiques
+Allow: /images/
+Allow: /styles.css
+Allow: /script.js
+Allow: /common.js
+
+# Bloquer les pages d'authentification, d'administration et d'erreur
+Disallow: /login.html
+Disallow: /signup.html
+Disallow: /forgot-password.html
+Disallow: /change-password.html
+Disallow: /dashboard.html
+Disallow: /404.html
+
+# Bloquer les fichiers de configuration accessibles
+Disallow: /.htaccess
+Disallow: /.env
+
+# Bloquer les fichiers techniques
+Disallow: /*.json$
+Disallow: /*.log$
+Disallow: /*.sql$
+Disallow: /*.env$
+Disallow: /*.php$
+Disallow: /*.config$
+Disallow: /*.bak$
+
+# Autoriser explicitement le sitemap XML
+Allow: /sitemap.xml
+
+# URL du sitemap
+Sitemap: https://medboard.alwaysdata.net/sitemap.xml
