@@ -96,7 +96,7 @@ final class PasswordsController
         ]);
 
         if (!$resetId) {
-            Flash::set('errors', ['global' => 'Une erreur est survenue. Merci de réessayer.']);
+            Flash::set('errors', 'Une erreur est survenue. Merci de réessayer.');
             Http::redirect('/auth/forgot-password');
             return;
         }
