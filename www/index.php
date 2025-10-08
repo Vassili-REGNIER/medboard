@@ -30,9 +30,9 @@ if (!isset($routes[$route])) {
     [$errClass, $errMethod] = $routes['error/404'];
     if (class_exists($errClass) && is_callable([$errClass, $errMethod])) {
         (new $errClass())->{$errMethod}();
+        error_log('Une page error 404 a été affichée');
         exit;
     }
-
     // Ne devrait pas être éxécuté
     // Si erreur on affiche un message simple 
     echo '404 — Page introuvable';

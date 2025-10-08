@@ -12,7 +12,7 @@ final class PasswordResetModel
     {
         $sql = 'INSERT INTO password_resets (user_id, token_hash, expires_at, created_at)
                 VALUES (:user_id, :token_hash, :expires_at, :created_at)
-                RETURNING id';
+                RETURNING user_id';
         $stmt = $this->pdo->prepare($sql);
         if (!$stmt->execute([
             ':user_id'    => $data['user_id'],

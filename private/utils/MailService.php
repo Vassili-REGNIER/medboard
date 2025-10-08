@@ -18,20 +18,17 @@ final class MailService
 
         // Configuration SMTP — à adapter selon ton compte AlwaysData
         $this->mail->isSMTP();
-        $this->mail->Host       = getenv('SMTP_HOST');
+        $this->mail->Host       = SMTP_HOST;
         $this->mail->SMTPAuth   = true;
-        $this->mail->Username   = getenv('SMTP_USERNAME');
-        $this->mail->Password   = getenv('SMTP_PASSWORD');
+        $this->mail->Username   = SMTP_USERNAME;
+        $this->mail->Password   = SMTP_PASSWORD;
         $this->mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
         $this->mail->Port       = 587;
 
         // Réglages de base
         $this->mail->CharSet = 'UTF-8';
         $this->mail->isHTML(true);
-        $this->mail->setFrom(
-            getenv('SMTP_FROM_EMAIL'),
-            getenv('SMTP_FROM_NAME')
-        );
+        $this->mail->setFrom(SMTP_FROM_EMAIL, SMTP_FROM_NAME);
     }
 
     /**

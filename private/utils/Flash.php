@@ -16,4 +16,8 @@ final class Flash {
         foreach ($keys as $k) { $out[$k] = self::consume($k); }
         return $out;
     }
+    public static function push(string $key, mixed $value): void {
+        $cur = $_SESSION[$key] ?? [];
+        $_SESSION[$key] = array_merge((array) $cur, (array) $value);
+    }
 }
