@@ -25,8 +25,15 @@
         <div class="dashboard-hero">
             <div class="dashboard-container">
                 <div class="dashboard-header">
-                    <p class="dashboard-greeting" id="dashboardGreeting">Bonjour, Demo</p>
-                    <p class="dashboard-specialization" id="dashboardSpecialization"></p>
+                    <p class="dashboard-greeting">
+                        Bonjour, <?= htmlspecialchars($prenom) ?> <?= htmlspecialchars($nom) ?>
+                    </p>
+
+                    <?php if (!empty($specialization)) : ?>
+                        <p class="dashboard-specialization">
+                            <?= htmlspecialchars($specialization) ?>
+                        </p>
+                    <?php endif; ?>
                 </div>
                 <p class="dashboard-subtitle">Bienvenue sur votre tableau de bord</p>
 
