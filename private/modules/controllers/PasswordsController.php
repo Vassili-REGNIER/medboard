@@ -86,7 +86,7 @@ final class PasswordsController
         $tokenHash  = hash('sha256', $plainToken);
         $expiresAt  = (new DateTimeImmutable('+30 minutes'))->format('Y-m-d H:i:s');
 
-        // Optionnel : invalider les anciens tokens de cet utilisateur
+        // Invalider les anciens tokens de cet utilisateur
         $this->passwordResetModel->invalidateForUser((int)$user['user_id']);
         $resetId = $this->passwordResetModel->create([
             'user_id'    => (int)$user['user_id'],
@@ -223,7 +223,7 @@ final class PasswordsController
         // 5) Mise à jour du mot de passe + invalidation du token
         try {
             $this->userModel->updatePassword((int)$uid, $hash);
-            $this->passwordResetModel->markUsedById((int)$resetRow['id']); // set used_at = NOW()
+            $this->passwordResetModel->markUsedById((int)$resetRow['user_id']); // set used_at = NOW()
             Flash::set('success', 'Votre mot de passe a été réinitialisé. Vous pouvez vous connecter.');
             Http::redirect('/auth/login');
             return;
