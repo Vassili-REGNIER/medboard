@@ -88,41 +88,27 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // Password Toggle Functionality
-    const passwordToggles = document.querySelectorAll('.password-toggle');
-    console.log('Password toggles found:', passwordToggles.length);
+    document.querySelectorAll('.password-toggle').forEach(function(button) {
+        button.addEventListener('click', function(event) {
+            event.preventDefault();
 
-    passwordToggles.forEach(function(toggle, index) {
-        console.log('Setting up toggle', index, toggle);
+            // Trouver le wrapper parent (password-wrapper ou input-wrapper)
+            const wrapper = button.closest('.password-wrapper') || button.closest('.input-wrapper');
 
-        toggle.addEventListener('click', function(e) {
-            console.log('Toggle clicked!', e.target);
-            e.preventDefault(); // Prevent any default button behavior
-            e.stopPropagation(); // Stop event from bubbling
+            if (wrapper) {
+                // Trouver l'input de mot de passe dans le wrapper
+                const input = wrapper.querySelector('input[type="password"], input[type="text"]');
 
-            // Find the wrapper (password-wrapper or input-wrapper)
-            const wrapper = toggle.closest('.password-wrapper') || toggle.closest('.input-wrapper');
-            console.log('Wrapper found:', wrapper);
-
-            if (!wrapper) {
-                console.error('Password toggle: No wrapper found');
-                return;
-            }
-
-            // Find the password input inside the wrapper
-            const passwordInput = wrapper.querySelector('input[type="password"], input[type="text"]');
-            console.log('Password input found:', passwordInput);
-
-            if (passwordInput) {
-                // Toggle between password and text
-                const isPassword = passwordInput.type === 'password';
-                console.log('Current type:', passwordInput.type, '-> New type:', isPassword ? 'text' : 'password');
-                passwordInput.type = isPassword ? 'text' : 'password';
-
-                // Update aria-label
-                toggle.setAttribute('aria-label', isPassword ? 'Masquer le mot de passe' : 'Afficher le mot de passe');
-                console.log('Password toggled successfully!');
-            } else {
-                console.error('Password toggle: No input found in wrapper');
+                if (input) {
+                    // Basculer le type
+                    if (input.type === 'password') {
+                        input.type = 'text';
+                        button.setAttribute('aria-label', 'Masquer le mot de passe');
+                    } else {
+                        input.type = 'password';
+                        button.setAttribute('aria-label', 'Afficher le mot de passe');
+                    }
+                }
             }
         });
     });
