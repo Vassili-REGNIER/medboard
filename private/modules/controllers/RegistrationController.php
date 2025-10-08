@@ -77,6 +77,11 @@ final class RegistrationController
         // 2) Validations alignées sur la BD (via Inputs)
         $errors = [];
 
+        // Vérifier l'acceptation des conditions
+        if (!$termsAccepted) {
+            $errors[] = 'Vous devez accepter les conditions d\'utilisation et la politique de confidentialité.';
+        }
+
         if ($msg = Inputs::validateName($firstname, max: 32, label: 'Le prénom'))  $errors[] = $msg;
         if ($msg = Inputs::validateName($lastname,  max: 32, label: 'Le nom'))     $errors[] = $msg;
         if ($msg = Inputs::validateUsername($username, min: 3, max: 32))           $errors[] = $msg;
