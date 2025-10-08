@@ -28,14 +28,13 @@ if (!isset($routes[$route])) {
     http_response_code(404);
     
     [$errClass, $errMethod] = $routes['error/404'];
-    if (class_exists($errClass) && is_callable([$errClass, $errMethod])) {
+    try {
         (new $errClass())->{$errMethod}();
-        error_log('Une page error 404 a été affichée');
         exit;
+    } catch (Exception $e) {
+        error_log($e->getMessage());
     }
-    // Ne devrait pas être éxécuté
-    // Si erreur on affiche un message simple 
-    echo '404 — Page introuvable';
+        
 }
 
 [$class, $method, $requiresAuth] = $routes[$route];
