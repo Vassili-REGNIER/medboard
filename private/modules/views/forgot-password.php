@@ -99,10 +99,29 @@
                         <p class="signup-subtitle">Saisissez votre adresse email pour recevoir un lien de réinitialisation</p>
                     </div>
 
-                    <form class="signup-form">
+                    <?php if (!empty($success)): ?>
+                        <div class="success" role="status" style="background:#e9ffe9; border:1px solid #9ed99e; color:#136b13; padding:.75rem; border-radius:10px; margin-bottom:1rem;">
+                            <?= htmlspecialchars(is_array($success) ? implode(' ', $success) : $success, ENT_QUOTES, 'UTF-8') ?>
+                        </div>
+                    <?php endif; ?>
+
+                    <?php if (!empty($errors['global'])): ?>
+                        <div class="errors" role="alert" style="background:#ffecec; border:1px solid #ffb3b3; color:#a40000; padding:.75rem; border-radius:10px; margin-bottom:1rem;">
+                            <?= htmlspecialchars(is_array($errors['global']) ? implode(' ', $errors['global']) : $errors['global'], ENT_QUOTES, 'UTF-8') ?>
+                        </div>
+                    <?php endif; ?>
+
+                    <form class="signup-form" method="post" action="/auth/forgot-password" novalidate>
+                        <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'], ENT_QUOTES, 'UTF-8') ?>">
+
                         <div class="form-group">
                             <label for="email" class="form-label">Adresse email</label>
-                            <input type="email" id="email" class="form-input" placeholder="votre.email@example.com" autocomplete="email" required>
+                            <input type="email" id="email" name="email" class="form-input" placeholder="votre.email@example.com" autocomplete="email" required maxlength="254" value="<?= htmlspecialchars((string)($old['email'] ?? ''), ENT_QUOTES, 'UTF-8') ?>">
+                            <?php if (!empty($errors['email'])): ?>
+                                <p class="err" role="alert" style="color:#c33; font-size:.925rem; margin:.25rem 0 0;">
+                                    <?= htmlspecialchars(is_array($errors['email']) ? implode(' ', $errors['email']) : $errors['email'], ENT_QUOTES, 'UTF-8') ?>
+                                </p>
+                            <?php endif; ?>
                         </div>
 
                         <button type="submit" class="btn-submit">Envoyer le lien</button>
@@ -174,7 +193,6 @@
     </footer>
 
     <script src="/_assets/js/common.js" defer></script>
-    <script src="/_assets/js/forgot-password.js" defer></script>
 </body>
 </html>
 

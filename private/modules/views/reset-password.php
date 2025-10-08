@@ -96,15 +96,34 @@
                     <h1 class="change-password-title">Nouveau mot de passe</h1>
                     <p class="change-password-subtitle">Choisissez un mot de passe sécurisé pour votre compte</p>
 
-                    <form id="changePasswordForm" class="change-password-form">
+                    <?php if (!empty($success)): ?>
+                        <div class="success" role="status" style="background:#e9ffe9; border:1px solid #9ed99e; color:#136b13; padding:.75rem; border-radius:10px; margin-bottom:1rem;">
+                            <?= htmlspecialchars(is_array($success) ? implode(' ', $success) : $success, ENT_QUOTES, 'UTF-8') ?>
+                        </div>
+                    <?php endif; ?>
+
+                    <?php if (!empty($errors['global'])): ?>
+                        <div class="errors" role="alert" style="background:#ffecec; border:1px solid #ffb3b3; color:#a40000; padding:.75rem; border-radius:10px; margin-bottom:1rem;">
+                            <?= htmlspecialchars(is_array($errors['global']) ? implode(' ', $errors['global']) : $errors['global'], ENT_QUOTES, 'UTF-8') ?>
+                        </div>
+                    <?php endif; ?>
+
+                    <form id="changePasswordForm" class="change-password-form" method="post" action="/auth/reset-password" novalidate>
+                        <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'], ENT_QUOTES, 'UTF-8') ?>">
+                        <input type="hidden" name="token" value="<?= htmlspecialchars((string)($token ?? ''), ENT_QUOTES, 'UTF-8') ?>">
+                        <input type="hidden" name="uid" value="<?= htmlspecialchars((string)($uid ?? ''), ENT_QUOTES, 'UTF-8') ?>">
+
                         <div class="form-group">
                             <label for="newPassword" class="form-label">Nouveau mot de passe</label>
                             <div class="input-wrapper">
-                                <input 
-                                    type="password" 
-                                    id="newPassword" 
-                                    class="form-input password-input" 
+                                <input
+                                    type="password"
+                                    id="newPassword"
+                                    name="password"
+                                    class="form-input password-input"
                                     placeholder="••••••••"
+                                    required
+                                    minlength="8"
                                     autocomplete="new-password"
                                 >
                                 <button type="button" class="password-toggle" aria-label="Afficher le mot de passe">
@@ -112,53 +131,24 @@
                                     <img src="/_assets/images/oeil-dark.svg" alt="" class="eye-dark">
                                 </button>
                             </div>
-                            
-                            <!-- Password Strength Bar -->
-                            <div class="password-strength">
-                                <div class="password-strength-bar">
-                                    <div class="password-strength-fill" id="strengthFill"></div>
-                                </div>
-                                <span class="password-strength-label" id="strengthLabel">Faible</span>
-                            </div>
-                        </div>
-
-                        <!-- Password Requirements -->
-                        <div class="password-requirements">
-                            <div class="requirement" id="req-length">
-                                <img src="/_assets/images/croix-rouge.svg" alt="" class="requirement-icon requirement-invalid" aria-hidden="true">
-                                <img src="/_assets/images/check.svg" alt="" class="requirement-icon requirement-valid" aria-hidden="true">
-                                <span class="requirement-text">Au moins 8 caractères</span>
-                            </div>
-                            <div class="requirement" id="req-uppercase">
-                                <img src="/_assets/images/croix-rouge.svg" alt="" class="requirement-icon requirement-invalid" aria-hidden="true">
-                                <img src="/_assets/images/check.svg" alt="" class="requirement-icon requirement-valid" aria-hidden="true">
-                                <span class="requirement-text">Une lettre majuscule</span>
-                            </div>
-                            <div class="requirement" id="req-lowercase">
-                                <img src="/_assets/images/croix-rouge.svg" alt="" class="requirement-icon requirement-invalid" aria-hidden="true">
-                                <img src="/_assets/images/check.svg" alt="" class="requirement-icon requirement-valid" aria-hidden="true">
-                                <span class="requirement-text">Une lettre minuscule</span>
-                            </div>
-                            <div class="requirement" id="req-number">
-                                <img src="/_assets/images/croix-rouge.svg" alt="" class="requirement-icon requirement-invalid" aria-hidden="true">
-                                <img src="/_assets/images/check.svg" alt="" class="requirement-icon requirement-valid" aria-hidden="true">
-                                <span class="requirement-text">Un chiffre</span>
-                            </div>
-                            <div class="requirement" id="req-special">
-                                <img src="/_assets/images/croix-rouge.svg" alt="" class="requirement-icon requirement-invalid" aria-hidden="true">
-                                <img src="/_assets/images/check.svg" alt="" class="requirement-icon requirement-valid" aria-hidden="true">
-                                <span class="requirement-text">Un caractère spécial</span>
-                            </div>
+                            <?php if (!empty($errors['password'])): ?>
+                                <p class="err" role="alert" style="color:#c33; font-size:.925rem; margin:.25rem 0 0;">
+                                    <?= htmlspecialchars(is_array($errors['password']) ? implode(' ', $errors['password']) : $errors['password'], ENT_QUOTES, 'UTF-8') ?>
+                                </p>
+                            <?php endif; ?>
                         </div>
 
                         <div class="form-group">
                             <label for="confirmPassword" class="form-label">Confirmer le mot de passe</label>
                             <div class="input-wrapper">
-                                <input 
-                                    type="password" 
-                                    id="confirmPassword" 
-                                    class="form-input password-input" 
+                                <input
+                                    type="password"
+                                    id="confirmPassword"
+                                    name="password_confirm"
+                                    class="form-input password-input"
                                     placeholder="••••••••"
+                                    required
+                                    minlength="8"
                                     autocomplete="new-password"
                                 >
                                 <button type="button" class="password-toggle" aria-label="Afficher le mot de passe">
@@ -166,9 +156,14 @@
                                     <img src="/_assets/images/oeil-dark.svg" alt="" class="eye-dark">
                                 </button>
                             </div>
+                            <?php if (!empty($errors['password_confirm'])): ?>
+                                <p class="err" role="alert" style="color:#c33; font-size:.925rem; margin:.25rem 0 0;">
+                                    <?= htmlspecialchars(is_array($errors['password_confirm']) ? implode(' ', $errors['password_confirm']) : $errors['password_confirm'], ENT_QUOTES, 'UTF-8') ?>
+                                </p>
+                            <?php endif; ?>
                         </div>
 
-                        <button type="submit" class="btn-submit" id="submitBtn" disabled>
+                        <button type="submit" class="btn-submit" id="submitBtn">
                             Modifier le mot de passe
                         </button>
 
@@ -237,7 +232,6 @@
     </footer>
 
     <script src="/_assets/js/common.js" defer></script>
-    <script src="/_assets/js/change-password.js" defer></script>
 </body>
 </html>
 

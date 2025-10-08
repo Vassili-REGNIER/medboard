@@ -99,46 +99,56 @@
                         <p class="signup-subtitle">Rejoignez MedBoard et découvrez une nouvelle façon de gérer vos données médicales</p>
                     </div>
 
-                    <form class="signup-form">
+                    <?php if (!empty($errors)): ?>
+                        <div class="errors" role="alert" style="background:#ffecec; border:1px solid #ffb3b3; color:#a40000; padding:.75rem; border-radius:10px; margin-bottom:1rem;">
+                            <ul style="margin:0; padding-left: 1.2rem;">
+                                <?php foreach ($errors as $err): ?>
+                                    <li><?= htmlspecialchars($err, ENT_QUOTES, 'UTF-8') ?></li>
+                                <?php endforeach; ?>
+                            </ul>
+                        </div>
+                    <?php endif; ?>
+
+                    <form class="signup-form" method="post" action="/auth/register" novalidate>
+                        <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'], ENT_QUOTES, 'UTF-8') ?>">
+
                         <fieldset>
                             <legend class="sr-only">Informations personnelles</legend>
                             <div class="form-row">
                                 <div class="form-group">
                                     <label for="firstName" class="form-label">Prénom <span class="required">*</span></label>
-                                    <input type="text" id="firstName" class="form-input" placeholder="Votre prénom" autocomplete="given-name" required>
+                                    <input type="text" id="firstName" name="firstname" class="form-input" placeholder="Votre prénom" autocomplete="given-name" required value="<?= htmlspecialchars($old['firstname'] ?? '', ENT_QUOTES, 'UTF-8') ?>">
                                 </div>
                                 <div class="form-group">
                                     <label for="lastName" class="form-label">Nom <span class="required">*</span></label>
-                                    <input type="text" id="lastName" class="form-input" placeholder="Votre nom" autocomplete="family-name" required>
+                                    <input type="text" id="lastName" name="lastname" class="form-input" placeholder="Votre nom" autocomplete="family-name" required value="<?= htmlspecialchars($old['lastname'] ?? '', ENT_QUOTES, 'UTF-8') ?>">
                                 </div>
                             </div>
 
                             <div class="form-group">
                                 <label for="login" class="form-label">Login <span class="required">*</span></label>
-                                <input type="text" id="login" name="login" class="form-input" placeholder="Votre identifiant unique" autocomplete="username" required>
+                                <input type="text" id="login" name="username" class="form-input" placeholder="Votre identifiant unique" autocomplete="username" required value="<?= htmlspecialchars($old['username'] ?? '', ENT_QUOTES, 'UTF-8') ?>">
                             </div>
 
                             <div class="form-group">
                                 <label for="email" class="form-label">Adresse email <span class="required">*</span></label>
-                                <input type="email" id="email" class="form-input" placeholder="votre.email@exemple.com" autocomplete="email" required>
+                                <input type="email" id="email" name="email" class="form-input" placeholder="votre.email@exemple.com" autocomplete="email" required value="<?= htmlspecialchars($old['email'] ?? '', ENT_QUOTES, 'UTF-8') ?>">
                             </div>
 
                             <div class="form-group">
                                 <label for="specialization" class="form-label">Spécialisation</label>
-                                <select id="specialization" class="form-select" autocomplete="off">
+                                <select id="specialization" name="specialization" class="form-select" autocomplete="off">
                                     <option value="">-- Aucune --</option>
-                                    <option value="Cardiology">Cardiology</option>
-                                    <option value="Dermatology">Dermatology</option>
-                                    <option value="Endocrinology">Endocrinology</option>
-                                    <option value="Gastroenterology">Gastroenterology</option>
-                                    <option value="General_practice">General_practice</option>
-                                    <option value="Neurology">Neurology</option>
-                                    <option value="Oncology">Oncology</option>
-                                    <option value="Orthopedics">Orthopedics</option>
-                                    <option value="Pediatrics">Pediatrics</option>
-                                    <option value="Psychiatry">Psychiatry</option>
-                                    <option value="Radiology">Radiology</option>
-                                    <option value="Urology">Urology</option>
+                                    <?php
+                                        $current = $old['specialization'] ?? '';
+                                        foreach ($specializations as $id => $label):
+                                            $display = ucfirst($label);
+                                    ?>
+                                        <option value="<?= htmlspecialchars((string)$id, ENT_QUOTES, 'UTF-8') ?>"
+                                            <?= ($current === (string)$id) ? 'selected' : '' ?>>
+                                            <?= htmlspecialchars($display, ENT_QUOTES, 'UTF-8') ?>
+                                        </option>
+                                    <?php endforeach; ?>
                                 </select>
                             </div>
                         </fieldset>
@@ -148,7 +158,7 @@
                             <div class="form-group">
                                 <label for="password" class="form-label">Mot de passe <span class="required">*</span></label>
                                 <div class="password-wrapper">
-                                    <input type="password" class="form-input" id="password" placeholder="Créez un mot de passe sécurisé" autocomplete="new-password" required>
+                                    <input type="password" class="form-input" id="password" name="password" placeholder="Créez un mot de passe sécurisé" autocomplete="new-password" required minlength="8">
                                     <button type="button" class="password-toggle" id="togglePassword" aria-label="Afficher le mot de passe">
                                         <img src="/_assets/images/oeil-light.svg" alt="" class="eye-light" aria-hidden="true">
                                         <img src="/_assets/images/oeil-dark.svg" alt="" class="eye-dark" aria-hidden="true">
@@ -159,7 +169,7 @@
                             <div class="form-group">
                                 <label for="confirmPassword" class="form-label">Confirmer le mot de passe <span class="required">*</span></label>
                                 <div class="password-wrapper">
-                                    <input type="password" class="form-input" id="confirmPassword" placeholder="Confirmez votre mot de passe" autocomplete="new-password" required>
+                                    <input type="password" class="form-input" id="confirmPassword" name="password_confirm" placeholder="Confirmez votre mot de passe" autocomplete="new-password" required minlength="8">
                                     <button type="button" class="password-toggle" id="toggleConfirmPassword" aria-label="Afficher le mot de passe">
                                         <img src="/_assets/images/oeil-light.svg" alt="" class="eye-light" aria-hidden="true">
                                         <img src="/_assets/images/oeil-dark.svg" alt="" class="eye-dark" aria-hidden="true">
@@ -244,7 +254,6 @@
     </footer>
 
     <script src="/_assets/js/common.js" defer></script>
-    <script src="/_assets/js/signup.js" defer></script>
 </body>
 </html>
 

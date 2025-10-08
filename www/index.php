@@ -27,6 +27,8 @@ $route = $route ? trim($route, "/ \t\n\r\0\x0B") : 'site/home';
 if (!isset($routes[$route])) {
     http_response_code(404);
     echo '404 — Page introuvable';
+    $controller = new StaticPagesController();
+    $controller->notFound();
     exit;
 }
 

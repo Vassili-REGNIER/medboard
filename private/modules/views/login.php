@@ -99,12 +99,30 @@
                         <p class="signup-subtitle">Accédez à votre espace MedBoard</p>
                     </div>
 
-                    <form class="signup-form" novalidate>
+                    <?php if (!empty($errors)): ?>
+                        <div class="errors" role="alert" style="background:#ffecec; border:1px solid #ffb3b3; color:#a40000; padding:.75rem; border-radius:10px; margin-bottom:1rem;">
+                            <ul style="margin:0; padding-left: 1.2rem;">
+                                <?php foreach ($errors as $err): ?>
+                                    <li><?= htmlspecialchars($err, ENT_QUOTES, 'UTF-8') ?></li>
+                                <?php endforeach; ?>
+                            </ul>
+                        </div>
+                    <?php endif; ?>
+
+                    <?php if (!empty($success)): ?>
+                        <div class="success" role="status" style="background:#e9ffe9; border:1px solid #9ed99e; color:#136b13; padding:.75rem; border-radius:10px; margin-bottom:1rem;">
+                            <?= htmlspecialchars($success, ENT_QUOTES, 'UTF-8') ?>
+                        </div>
+                    <?php endif; ?>
+
+                    <form class="signup-form" method="post" action="/auth/login" novalidate>
+                        <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'], ENT_QUOTES, 'UTF-8') ?>">
+
                         <div class="form-group">
                             <label for="loginIdentifier" class="form-label">Email ou Login <span class="required">*</span></label>
                             <div class="input-with-icon">
                                 <img src="/_assets/images/mail.svg" alt="" class="input-icon" aria-hidden="true">
-                                <input type="text" id="loginIdentifier" name="identifier" class="form-input" placeholder="@email.com ou votre login" required autocomplete="username">
+                                <input type="text" id="loginIdentifier" name="login" class="form-input" placeholder="@email.com ou votre login" required autocomplete="username" value="<?= htmlspecialchars($old['login'] ?? '', ENT_QUOTES, 'UTF-8') ?>">
                             </div>
                         </div>
 
@@ -113,7 +131,7 @@
                             <div class="password-wrapper">
                                 <div class="input-with-icon">
                                     <img src="/_assets/images/lock.svg" alt="" class="input-icon" aria-hidden="true">
-                                    <input type="password" id="loginPassword" class="form-input" placeholder="••••••••" required autocomplete="current-password">
+                                    <input type="password" id="loginPassword" name="password" class="form-input" placeholder="••••••••" required minlength="8" autocomplete="current-password">
                                 </div>
                                 <button type="button" class="password-toggle" id="toggleLoginPassword" aria-label="Afficher le mot de passe">
                                     <img src="/_assets/images/oeil-light.svg" alt="" class="eye-light" aria-hidden="true">
@@ -204,7 +222,6 @@
     </footer>
 
     <script src="/_assets/js/common.js" defer></script>
-    <script src="/_assets/js/login.js" defer></script>
 </body>
 </html>
 
