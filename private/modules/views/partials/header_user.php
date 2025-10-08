@@ -13,7 +13,7 @@
             <a href="/site/legal" class="nav-link">Mentions légales</a>
         </nav>
 
-                    <div class="header-actions">
+        <div class="header-actions">
             <button class="btn-icon" id="themeToggle" aria-label="Changer le thème">
                 <img src="/_assets/images/lune.svg" alt="" class="moon-icon" aria-hidden="true">
                 <img src="/_assets/images/soleil.svg" alt="" class="sun-icon" aria-hidden="true">
@@ -27,7 +27,19 @@
                 </button>
             </form>
             <button class="btn-profile" aria-label="Profil utilisateur">
-                <span class="profile-initials" id="profileInitials"></span>
+                <span class="profile-initials">
+                    <?php
+                        $user = $_SESSION['user'] ?? null;
+
+                        if ($user) {
+                            $firstnameLetter = mb_strtoupper(mb_substr($user['firstname'], 0, 1));
+                            $lastnameLetter = mb_strtoupper(mb_substr($user['lastname'], 0, 1));
+
+                            $initials = htmlspecialchars($firstnameLetter . $lastnameLetter, ENT_QUOTES, 'UTF-8');
+                            echo $initials;
+                        }
+                    ?>
+                </span>
             </button>
         </div>
 

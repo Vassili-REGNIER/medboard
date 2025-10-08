@@ -85,42 +85,5 @@
         require __DIR__ ."/partials/footer.php";
     ?>
 
-    <script src="/_assets/js/common.js" defer></script>
-    <script>
-        // Generate user initials and display user information dynamically
-        document.addEventListener('DOMContentLoaded', function() {
-            // Simulate user data - In production, this would come from the backend/session
-            const user = {
-                firstName: "Jeremy",
-                lastName: "Watripont",
-                specialization: "Cardiology"
-            };
-
-            // Function to generate initials
-            function generateInitials(firstName, lastName) {
-                const firstInitial = firstName.charAt(0).toUpperCase();
-                const lastInitial = lastName.charAt(0).toUpperCase();
-                return firstInitial + lastInitial;
-            }
-
-            // Update the profile initials
-            const profileInitialsElement = document.getElementById('profileInitials');
-            if (profileInitialsElement) {
-                profileInitialsElement.textContent = generateInitials(user.firstName, user.lastName);
-            }
-
-            // Update the dashboard greeting with full name
-            const dashboardGreetingElement = document.getElementById('dashboardGreeting');
-            if (dashboardGreetingElement) {
-                dashboardGreetingElement.textContent = `Bonjour, ${user.firstName} ${user.lastName}`;
-            }
-
-            // Update the specialization display
-            const dashboardSpecializationElement = document.getElementById('dashboardSpecialization');
-            if (dashboardSpecializationElement && user.specialization) {
-                dashboardSpecializationElement.textContent = user.specialization;
-            }
-        });
-    </script>
 </body>
 </html>
