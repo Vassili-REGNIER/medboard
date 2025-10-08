@@ -91,10 +91,19 @@ document.addEventListener('DOMContentLoaded', function() {
     const passwordToggles = document.querySelectorAll('.password-toggle');
 
     passwordToggles.forEach(function(toggle) {
-        toggle.addEventListener('click', function() {
-            // Find the password wrapper and then the input inside
-            const wrapper = toggle.closest('.password-wrapper');
-            const passwordInput = wrapper ? wrapper.querySelector('input[type="password"], input[type="text"]') : null;
+        toggle.addEventListener('click', function(e) {
+            e.preventDefault(); // Prevent any default button behavior
+
+            // Find the wrapper (password-wrapper or input-wrapper)
+            const wrapper = toggle.closest('.password-wrapper') || toggle.closest('.input-wrapper');
+
+            if (!wrapper) {
+                console.error('Password toggle: No wrapper found');
+                return;
+            }
+
+            // Find the password input inside the wrapper
+            const passwordInput = wrapper.querySelector('input[type="password"], input[type="text"]');
 
             if (passwordInput) {
                 // Toggle between password and text
@@ -103,6 +112,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
                 // Update aria-label
                 toggle.setAttribute('aria-label', isPassword ? 'Masquer le mot de passe' : 'Afficher le mot de passe');
+            } else {
+                console.error('Password toggle: No input found in wrapper');
             }
         });
     });
