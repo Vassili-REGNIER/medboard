@@ -3,9 +3,9 @@ final class DashboardController
 {
     public function index(): void
     {
-        $prenom = mb_convert_case($_SESSION["firstname"], MB_CASE_TITLE, "UTF-8");
-        $nom = mb_convert_case($_SESSION["lastname"], MB_CASE_TITLE, "UTF-8");
-        $specialization = mb_convert_case($_SESSION["specialization"], MB_CASE_TITLE, "UTF-8");
+        $prenom = ucfirst($_SESSION["firstname"], ' -' ?? '');
+        $nom = ucfirst($_SESSION["lastname"], ' -' ?? '');
+        $specialization = ucfirst($_SESSION["specialization"], ' -' ?? '');
 
         require __DIR__ . '/../views/dashboard.php';
     }
