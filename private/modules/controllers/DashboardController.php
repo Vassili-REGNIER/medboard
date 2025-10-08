@@ -3,11 +3,11 @@ final class DashboardController
 {
     public function index(): void
     {   
-        $user = $_SESSION['user'] ?? null;
+        $user = $_SESSION['user'] ?? [];
 
-        $firstname = isset($user) ? ucfirst($user['firstname']) : '';
-        $lastname = isset($user) ? ucfirst($user['lastname']) : '';
-        $specialization = isset($user) ? ucfirst($user['specialization']) : '';
+        $firstname = mb_convert_case($user['firstname'] ?? '', MB_CASE_TITLE, 'UTF-8');
+        $lastname = mb_convert_case($user['lastname'] ?? '', MB_CASE_TITLE, 'UTF-8');
+        $specialization = mb_convert_case($user['specialization'] ?? '', MB_CASE_TITLE, 'UTF-8');
 
         require __DIR__ . '/../views/dashboard.php';
     }
