@@ -1,5 +1,5 @@
 // Common functionality for all pages: Theme switcher and Mobile menu
-document.addEventListener('DOMContentLoaded', function() {
+function initCommon() {
     // Theme Switcher
     const themeToggle = document.getElementById('themeToggle');
     const mobileThemeToggle = document.getElementById('mobileThemeToggle');
@@ -112,5 +112,13 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     });
-});
+}
+
+// Appeler l'initialisation quand le DOM est prêt
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initCommon);
+} else {
+    // Le DOM est déjà chargé
+    initCommon();
+}
 
