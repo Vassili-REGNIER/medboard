@@ -26,15 +26,19 @@
                 <a href="/site/legal" class="nav-link">Mentions légales</a>
             </nav>
 
-            <div class="header-actions">
+                        <div class="header-actions">
                 <button class="btn-icon" id="themeToggle" aria-label="Changer le thème">
                     <img src="/_assets/images/lune.svg" alt="" class="moon-icon" aria-hidden="true">
                     <img src="/_assets/images/soleil.svg" alt="" class="sun-icon" aria-hidden="true">
                 </button>
-                <button class="btn-icon logout-icon" aria-label="Déconnexion">
-                    <img src="/_assets/images/logout-light.svg" alt="" class="logout-light" aria-hidden="true">
-                    <img src="/_assets/images/logout-dark.svg" alt="" class="logout-dark" aria-hidden="true">
-                </button>
+                <form method="POST" action="/auth/logout" style="display: inline;">
+                    <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($_SESSION['csrf_token'], ENT_QUOTES, 'UTF-8') ?>">
+
+                    <button type="submit" class="btn-icon logout-icon" aria-label="Déconnexion">
+                        <img src="/_assets/images/logout-light.svg" alt="" class="logout-light" aria-hidden="true">
+                        <img src="/_assets/images/logout-dark.svg" alt="" class="logout-dark" aria-hidden="true">
+                    </button>
+                </form>
                 <button class="btn-profile" aria-label="Profil utilisateur">
                     <span class="profile-initials" id="profileInitials"></span>
                 </button>
