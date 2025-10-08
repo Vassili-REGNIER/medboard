@@ -85,5 +85,7 @@
         require __DIR__ ."/partials/footer.php";
     ?>
 
+    <script src="/_assets/js/common.js" defer></script>
+
 </body>
 </html>
