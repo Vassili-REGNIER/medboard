@@ -87,6 +87,21 @@ function initCommon() {
         });
     }
 
+    // Terms Checkbox Validation (Register Page)
+    const registerForm = document.querySelector('form[action*="register"]');
+    if (registerForm) {
+        const termsCheckbox = document.getElementById('terms');
+        if (termsCheckbox) {
+            registerForm.addEventListener('submit', function(event) {
+                if (!termsCheckbox.checked) {
+                    event.preventDefault();
+                    alert('Vous devez accepter les conditions d\'utilisation et la politique de confidentialité pour créer un compte.');
+                    termsCheckbox.focus();
+                }
+            });
+        }
+    }
+
     // Password Toggle Functionality
     document.querySelectorAll('.password-toggle').forEach(function(button) {
         button.addEventListener('click', function(event) {

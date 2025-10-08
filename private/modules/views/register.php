@@ -113,7 +113,7 @@
                         </fieldset>
 
                         <div class="form-checkbox">
-                            <input type="checkbox" id="terms" required>
+                            <input type="checkbox" id="terms" name="terms" required>
                             <label for="terms" class="checkbox-label">
                                 J'accepte les <a href="/site/not-found" class="form-link">conditions d'utilisation</a> et la <a href="/site/privacy" class="form-link">politique de confidentialité</a> <span class="required">*</span>
                             </label>
