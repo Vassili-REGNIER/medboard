@@ -1443,7 +1443,7 @@ body.dashboard-page .nav-link.active {
 }
 
 body.dashboard-page .header-actions {
-    gap: 12px;
+    gap: 16px;
 }
 
 .dashboard-hero {
