@@ -92,12 +92,15 @@ function initCommon() {
         button.addEventListener('click', function(event) {
             event.preventDefault();
 
-            // Trouver le wrapper parent (password-wrapper ou input-wrapper)
+            // Trouver le wrapper parent
             const wrapper = button.closest('.password-wrapper') || button.closest('.input-wrapper');
 
             if (wrapper) {
-                // Trouver l'input de mot de passe dans le wrapper
-                const input = wrapper.querySelector('input[type="password"], input[type="text"]');
+                // Chercher l'input dans le wrapper (directement ou dans un enfant)
+                let input = wrapper.querySelector('input[type="password"]');
+                if (!input) {
+                    input = wrapper.querySelector('input[type="text"][id*="assword"]');
+                }
 
                 if (input) {
                     // Basculer le type
