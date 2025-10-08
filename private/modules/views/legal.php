@@ -117,7 +117,7 @@
                         Conformément aux dispositions des articles 6-III et 19 de la loi n° 2004-575 du 21 juin 2004 pour la confiance dans l'économie numérique (LCEN), il est porté à la connaissance des utilisateurs et visiteurs du site MedBoard les présentes mentions légales.
                     </p>
                     <p class="legal-paragraph">
-                        Le site MedBoard est accessible à l'adresse suivante : <a href="https://medboard.fr" target="_blank" rel="noopener">https://medboard.fr</a> (ci-après « le Site »). L'accès et l'utilisation du Site sont soumis aux présentes mentions légales détaillées ci-après, ainsi qu'aux lois et/ou règlements applicables. La connexion, l'utilisation et l'accès au Site impliquent l'acceptation intégrale et sans réserve de toutes les dispositions des présentes mentions légales.
+                        Le site MedBoard est accessible à l'adresse suivante : <a href="https://medboard.alwaysdata.net/" target="_blank" rel="noopener">https://medboard.alwaysdata.net/</a> (ci-après « le Site »). L'accès et l'utilisation du Site sont soumis aux présentes mentions légales détaillées ci-après, ainsi qu'aux lois et/ou règlements applicables. La connexion, l'utilisation et l'accès au Site impliquent l'acceptation intégrale et sans réserve de toutes les dispositions des présentes mentions légales.
                     </p>
 
                     <h2 class="legal-section-heading">Article 1 – Informations légales</h2>
