@@ -340,11 +340,16 @@ fieldset {
     justify-content: center;
     padding: 4px;
     transform: translateY(-50%);
+    background: none;
+    border: none;
+    cursor: pointer;
+    z-index: 10;
 }
 
 .password-toggle img {
     width: 16px;
     height: 16px;
+    pointer-events: none;
 }
 
 .password-toggle .eye-light {
@@ -1312,11 +1317,13 @@ input:focus-visible {
     border: none;
     transform: translateY(-50%);
     cursor: pointer;
+    z-index: 10;
 }
 
 .change-password-form .password-toggle img {
     width: 20px;
     height: 20px;
+    pointer-events: none;
 }
 
 /* ----- Password Strength Indicator ----- */

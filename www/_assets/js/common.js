@@ -63,20 +63,20 @@ document.addEventListener('DOMContentLoaded', function() {
     const mobileMenuToggle = document.getElementById('mobileMenuToggle');
     const mobileMenu = document.getElementById('mobileMenu');
     const mobileMenuClose = document.getElementById('mobileMenuClose');
-    
+
     if (mobileMenuToggle && mobileMenu && mobileMenuClose) {
         // Ouvrir le menu mobile
         mobileMenuToggle.addEventListener('click', function() {
             mobileMenu.classList.add('active');
             document.body.style.overflow = 'hidden';
         });
-        
+
         // Fermer le menu mobile
         mobileMenuClose.addEventListener('click', function() {
             mobileMenu.classList.remove('active');
             document.body.style.overflow = '';
         });
-        
+
         // Fermer le menu en cliquant sur un lien
         const mobileMenuLinks = mobileMenu.querySelectorAll('.mobile-menu-link, .mobile-menu-actions a');
         mobileMenuLinks.forEach(link => {
@@ -86,5 +86,31 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         });
     }
+
+    // Password Toggle Functionality
+    document.querySelectorAll('.password-toggle').forEach(function(button) {
+        button.addEventListener('click', function(event) {
+            event.preventDefault();
+
+            // Trouver le wrapper parent (password-wrapper ou input-wrapper)
+            const wrapper = button.closest('.password-wrapper') || button.closest('.input-wrapper');
+
+            if (wrapper) {
+                // Trouver l'input de mot de passe dans le wrapper
+                const input = wrapper.querySelector('input[type="password"], input[type="text"]');
+
+                if (input) {
+                    // Basculer le type
+                    if (input.type === 'password') {
+                        input.type = 'text';
+                        button.setAttribute('aria-label', 'Masquer le mot de passe');
+                    } else {
+                        input.type = 'password';
+                        button.setAttribute('aria-label', 'Afficher le mot de passe');
+                    }
+                }
+            }
+        });
+    });
 });
 
