@@ -92,14 +92,24 @@ function initCommon() {
         button.addEventListener('click', function(event) {
             event.preventDefault();
 
-            // Chercher tous les inputs de mot de passe sur la page
-            const allPasswordInputs = document.querySelectorAll('input[type="password"], input[type="text"][id*="assword"]');
+            // Chercher tous les wrappers de mot de passe
+            const allPasswordWrappers = document.querySelectorAll('.password-wrapper, .input-wrapper');
+            const allPasswordInputs = [];
+
+            // Collecter tous les inputs de mot de passe
+            allPasswordWrappers.forEach(function(wrapper) {
+                const input = wrapper.querySelector('input[type="password"]') ||
+                              wrapper.querySelector('input[type="text"][id*="assword"]') ||
+                              wrapper.querySelector('input[type="text"][name*="password"]');
+                if (input) {
+                    allPasswordInputs.push(input);
+                }
+            });
+
+            if (allPasswordInputs.length === 0) return;
 
             // Vérifier l'état actuel du premier input
-            const firstInput = allPasswordInputs[0];
-            if (!firstInput) return;
-
-            const shouldShow = firstInput.type === 'password';
+            const shouldShow = allPasswordInputs[0].type === 'password';
 
             // Appliquer le changement à tous les inputs de mot de passe
             allPasswordInputs.forEach(function(input) {
