@@ -92,27 +92,32 @@ function initCommon() {
         button.addEventListener('click', function(event) {
             event.preventDefault();
 
-            // Trouver le wrapper parent
-            const wrapper = button.closest('.password-wrapper') || button.closest('.input-wrapper');
+            // Chercher tous les inputs de mot de passe sur la page
+            const allPasswordInputs = document.querySelectorAll('input[type="password"], input[type="text"][id*="assword"]');
 
-            if (wrapper) {
-                // Chercher l'input dans le wrapper (directement ou dans un enfant)
-                let input = wrapper.querySelector('input[type="password"]');
-                if (!input) {
-                    input = wrapper.querySelector('input[type="text"][id*="assword"]');
-                }
+            // Vérifier l'état actuel du premier input
+            const firstInput = allPasswordInputs[0];
+            if (!firstInput) return;
 
-                if (input) {
-                    // Basculer le type
-                    if (input.type === 'password') {
-                        input.type = 'text';
-                        button.setAttribute('aria-label', 'Masquer le mot de passe');
-                    } else {
-                        input.type = 'password';
-                        button.setAttribute('aria-label', 'Afficher le mot de passe');
-                    }
+            const shouldShow = firstInput.type === 'password';
+
+            // Appliquer le changement à tous les inputs de mot de passe
+            allPasswordInputs.forEach(function(input) {
+                if (shouldShow) {
+                    input.type = 'text';
+                } else {
+                    input.type = 'password';
                 }
-            }
+            });
+
+            // Mettre à jour tous les boutons toggle
+            document.querySelectorAll('.password-toggle').forEach(function(btn) {
+                if (shouldShow) {
+                    btn.setAttribute('aria-label', 'Masquer le mot de passe');
+                } else {
+                    btn.setAttribute('aria-label', 'Afficher le mot de passe');
+                }
+            });
         });
     });
 }
