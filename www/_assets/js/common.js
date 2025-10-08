@@ -63,20 +63,20 @@ document.addEventListener('DOMContentLoaded', function() {
     const mobileMenuToggle = document.getElementById('mobileMenuToggle');
     const mobileMenu = document.getElementById('mobileMenu');
     const mobileMenuClose = document.getElementById('mobileMenuClose');
-    
+
     if (mobileMenuToggle && mobileMenu && mobileMenuClose) {
         // Ouvrir le menu mobile
         mobileMenuToggle.addEventListener('click', function() {
             mobileMenu.classList.add('active');
             document.body.style.overflow = 'hidden';
         });
-        
+
         // Fermer le menu mobile
         mobileMenuClose.addEventListener('click', function() {
             mobileMenu.classList.remove('active');
             document.body.style.overflow = '';
         });
-        
+
         // Fermer le menu en cliquant sur un lien
         const mobileMenuLinks = mobileMenu.querySelectorAll('.mobile-menu-link, .mobile-menu-actions a');
         mobileMenuLinks.forEach(link => {
@@ -86,5 +86,25 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         });
     }
+
+    // Password Toggle Functionality
+    const passwordToggles = document.querySelectorAll('.password-toggle');
+
+    passwordToggles.forEach(function(toggle) {
+        toggle.addEventListener('click', function() {
+            // Find the password input (either sibling or within parent's sibling)
+            const wrapper = toggle.closest('.password-wrapper') || toggle.closest('.input-wrapper');
+            const passwordInput = wrapper ? wrapper.querySelector('input[type="password"], input[type="text"]') : toggle.previousElementSibling;
+
+            if (passwordInput) {
+                // Toggle between password and text
+                const isPassword = passwordInput.type === 'password';
+                passwordInput.type = isPassword ? 'text' : 'password';
+
+                // Update aria-label
+                toggle.setAttribute('aria-label', isPassword ? 'Masquer le mot de passe' : 'Afficher le mot de passe');
+            }
+        });
+    });
 });
 
