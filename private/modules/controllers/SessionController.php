@@ -83,14 +83,42 @@ final class SessionController
             // Succès
             $this->userModel->maybeRehashPassword((int)$user['user_id'], $password, $hash);
             session_regenerate_id(true);
+
+            // Récupération du libellé de spécialisation à partir de l'ID
+            $specName = null;
+            $specId = isset($user['specialization_id']) ? (int)$user['specialization_id'] : 0;
+
+            if ($specId > 0) {
+                try {
+                    $specModel = new SpecializationModel();
+
+                    // Vérifie que la spécialisation existe avant de chercher le libellé
+                    if ($specModel->existsById($specId)) {
+                        $pairs = $specModel->getPairs();
+                        $specName = $pairs[(string)$specId] ?? null;
+
+                        // Met en forme correctement (Cardiology -> "Cardiology", gère les accents)
+                        if ($specName !== null) {
+                            $specName = mb_convert_case($specName, MB_CASE_TITLE, 'UTF-8');
+                        }
+                    } else {
+                        error_log("Specialization not found for ID: {$specId}");
+                    }
+                } catch (Throwable $e) {
+                    error_log("Erreur lors de la récupération de la spécialisation (ID {$specId}): " . $e->getMessage());
+                    $specName = null;
+                }
+            }
+            
             $_SESSION['user'] = [
-                'user_id'        => (int)$user['user_id'],
-                'firstname'      => $user['firstname'] ?? null,
-                'lastname'       => $user['lastname'] ?? null,
-                'username'       => $user['username'] ?? null,
-                'email'          => $user['email'] ?? null,
-                'specialization' => $user['specialization'] ?? null,
-                'login_at'       => time(),
+                'user_id'           => (int)$user['user_id'],
+                'firstname'         => $user['firstname'] ?? null,
+                'lastname'          => $user['lastname'] ?? null,
+                'username'          => $user['username'] ?? null,
+                'email'             => $user['email'] ?? null,
+                'specialization_id' => $specId ?: null,
+                'specialization'    => $specName,
+                'login_at'          => time(),
             ];
 
             Http::redirect('/dashboard/index');
