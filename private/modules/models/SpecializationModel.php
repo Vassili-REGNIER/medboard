@@ -23,13 +23,13 @@ final class SpecializationModel
 
     /**
      * Retourne la liste des spécialisations (id + libellé), triée par nom.
-     * Format: [['specialization_id' => 1, 'name_en' => 'cardiology'], ...]
+     * Format: [['specialization_id' => 1, 'name_fr' => 'cardiology'], ...]
      */
     public function getAll(): array
     {
-        $sql  = "SELECT specialization_id, name_en
+        $sql  = "SELECT specialization_id, name_fr
                  FROM specializations
-                 ORDER BY name_en ASC";
+                 ORDER BY name_fr ASC";
         $stmt = $this->pdo->query($sql);
         $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
@@ -44,7 +44,7 @@ final class SpecializationModel
     {
         $pairs = [];
         foreach ($this->getAll() as $row) {
-            $pairs[(string)$row['specialization_id']] = (string)$row['name_en'];
+            $pairs[(string)$row['specialization_id']] = (string)$row['name_fr'];
         }
         return $pairs;
     }
