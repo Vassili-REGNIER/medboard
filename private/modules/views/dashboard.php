@@ -32,7 +32,6 @@
                     <?php if (!empty($specialization)) : ?>
                         <p class="dashboard-specialization">
                             <?= htmlspecialchars($specialization) ?>
-                            <?php error_log($specialization); ?>
                         </p>
                     <?php endif; ?>
                 </div>
