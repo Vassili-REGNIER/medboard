@@ -2,10 +2,12 @@
 final class DashboardController
 {
     public function index(): void
-    {
-        $prenom = isset($_SESSION['firstname']) ? ucfirst($_SESSION['firstname']) : '';
-        $nom = isset($_SESSION['lastname']) ? ucfirst($_SESSION['lastname']) : '';
-        $specialization = isset($_SESSION['specialization']) ? ucfirst($_SESSION['specialization']) : '';
+    {   
+        $user = $_SESSION['user'] ?? null;
+
+        $firstname = isset($user) ? ucfirst($user['firstname']) : '';
+        $lastname = isset($user) ? ucfirst($user['lastname']) : '';
+        $specialization = isset($user) ? ucfirst($user['specialization']) : '';
 
         require __DIR__ . '/../views/dashboard.php';
     }

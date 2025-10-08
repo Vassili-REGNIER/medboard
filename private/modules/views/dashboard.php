@@ -26,7 +26,7 @@
             <div class="dashboard-container">
                 <div class="dashboard-header">
                     <p class="dashboard-greeting">
-                        Bonjour, <?= htmlspecialchars($prenom) ?> <?= htmlspecialchars($nom) ?>
+                        Bonjour, <?= htmlspecialchars($firstname) ?> <?= htmlspecialchars($lastname) ?>
                     </p>
 
                     <?php if (!empty($specialization)) : ?>
