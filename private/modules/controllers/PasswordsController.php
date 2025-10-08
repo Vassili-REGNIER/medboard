@@ -206,7 +206,7 @@ final class PasswordsController
         $resetRow = $this->passwordResetModel->findValidByUidAndToken((int)$uid, $token);
 
         if (!$resetRow) {
-            Flash::set('errors', ['global' => 'Lien de réinitialisation invalide ou expiré.']);
+            Flash::set('errors', 'Lien de réinitialisation invalide ou expiré.');
             Http::redirect('/auth/reset-password?token='.urlencode($token).'&uid='.(int)$uid);
             return;
         }
@@ -215,7 +215,7 @@ final class PasswordsController
         $hash = password_hash($pwd, PASSWORD_ARGON2ID);
         if ($hash === false || ($msg = Inputs::validateArgon2idPHC($hash))) {
             // log éventuel
-            Flash::set('errors', ['global' => 'Erreur interne lors du hachage du mot de passe.']);
+            Flash::set('errors', 'Erreur interne lors du hachage du mot de passe.');
             Http::redirect('/auth/reset-password?token='.urlencode($token).'&uid='.(int)$uid);
             return;
         }
@@ -229,7 +229,7 @@ final class PasswordsController
             return;
         } catch (Throwable $e) {
             // log éventuel
-            Flash::set('errors', ['global' => 'Erreur interne lors de la mise à jour du mot de passe.']);
+            Flash::set('errors', 'Erreur interne lors de la mise à jour du mot de passe.');
             Http::redirect('/auth/reset-password?token='.urlencode($token).'&uid='.(int)$uid);
             return;
         }
