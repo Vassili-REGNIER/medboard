@@ -7,7 +7,7 @@
         </a>
 
         <nav class="nav dashboard-nav">
-            <a href="/dashboard/index" class="nav-link active">Tableau de bord</a>
+            <a href="/dashboard/index" class="nav-link">Tableau de bord</a>
             <a href="/site/home" class="nav-link">Accueil</a>
             <a href="/site/sitemap" class="nav-link">Plan du site</a>
             <a href="/site/legal" class="nav-link">Mentions légales</a>

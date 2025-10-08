@@ -87,6 +87,29 @@ function initCommon() {
         });
     }
 
+    // Active Navigation Link Highlighting
+    const currentPath = window.location.pathname;
+
+    // Sélectionner tous les liens de navigation (desktop et mobile)
+    const navLinks = document.querySelectorAll('.nav-link, .mobile-menu-link');
+
+    navLinks.forEach(function(link) {
+        // Supprimer la classe active de tous les liens
+        link.classList.remove('active');
+
+        // Récupérer le href du lien
+        const linkPath = link.getAttribute('href');
+
+        // Vérifier si le href correspond à l'URL actuelle
+        if (linkPath && currentPath === linkPath) {
+            link.classList.add('active');
+        }
+        // Gestion spéciale pour la page d'accueil
+        else if (linkPath === '/site/home' && (currentPath === '/' || currentPath === '/site/home')) {
+            link.classList.add('active');
+        }
+    });
+
     // Password Toggle Functionality
     document.querySelectorAll('.password-toggle').forEach(function(button) {
         button.addEventListener('click', function(event) {
