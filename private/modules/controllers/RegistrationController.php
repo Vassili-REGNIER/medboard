@@ -63,8 +63,9 @@ final class RegistrationController
         // On n'enregistre JAMAIS le mot de passe en "old"
         $password  = (string)($_POST['password'] ?? '');
         $password2 = (string)($_POST['password_confirm'] ?? '');
+        $termsAccepted = isset($_POST['terms']) && $_POST['terms'] === 'on';
 
-        // Flash old (versions normalisées, car c’est ce qui sera stocké en DB)
+        // Flash old (versions normalisées, car c'est ce qui sera stocké en DB)
         +Flash::set('old', [
             'firstname'      => $firstname,
             'lastname'       => $lastname,
