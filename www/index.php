@@ -26,10 +26,16 @@ $route = $route ? trim($route, "/ \t\n\r\0\x0B") : 'site/home';
 
 if (!isset($routes[$route])) {
     http_response_code(404);
+    
+    [$errClass, $errMethod] = $routes['error/404'];
+    if (class_exists($errClass) && is_callable([$errClass, $errMethod])) {
+        (new $errClass())->{$errMethod}();
+        exit;
+    }
+
+    // Ne devrait pas être éxécuté
+    // Si erreur on affiche un message simple 
     echo '404 — Page introuvable';
-    $controller = new StaticPagesController();
-    $controller->notFound();
-    exit;
 }
 
 [$class, $method, $requiresAuth] = $routes[$route];

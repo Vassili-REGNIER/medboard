@@ -8,7 +8,7 @@ return [
     'site/sitemap'         => ['StaticPagesController',  'sitemap',  false],
     'site/legal'           => ['StaticPagesController',  'legal',    false],
     'site/privacy'         => ['StaticPagesController',  'privacy', false],
-    'site/not-found'       => ['StaticPagesController',  'notFound', false],
+    'error/404'       => ['StaticPagesController',  'notFound', false],
 
     // Connexion / déco
     'auth/login'           => ['SessionController',      'login',    false],
