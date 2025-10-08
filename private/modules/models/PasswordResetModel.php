@@ -44,7 +44,7 @@ final class PasswordResetModel
                    AND token_hash = :hash
                    AND used_at IS NULL
                    AND expires_at > now()
-                 ORDER BY id DESC
+                 ORDER BY user_id DESC
                  LIMIT 1';
         $stmt = $this->pdo->prepare($sql);
         $stmt->execute([':uid' => $userId, ':hash' => $hash]);
@@ -54,7 +54,7 @@ final class PasswordResetModel
 
     public function markUsedById(int $id): void
     {
-        $stmt = $this->pdo->prepare('UPDATE password_resets SET used_at = now() WHERE id = :id');
-        $stmt->execute([':id' => $id]);
+        $stmt = $this->pdo->prepare('UPDATE password_resets SET used_at = now() WHERE user_id = :user_id');
+        $stmt->execute([':user_id' => $id]);
     }
 }
