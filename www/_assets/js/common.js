@@ -92,9 +92,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
     passwordToggles.forEach(function(toggle) {
         toggle.addEventListener('click', function() {
-            // Find the password input (either sibling or within parent's sibling)
-            const wrapper = toggle.closest('.password-wrapper') || toggle.closest('.input-wrapper');
-            const passwordInput = wrapper ? wrapper.querySelector('input[type="password"], input[type="text"]') : toggle.previousElementSibling;
+            // Find the password wrapper and then the input inside
+            const wrapper = toggle.closest('.password-wrapper');
+            const passwordInput = wrapper ? wrapper.querySelector('input[type="password"], input[type="text"]') : null;
 
             if (passwordInput) {
                 // Toggle between password and text
