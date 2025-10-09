@@ -49,6 +49,14 @@ final class SessionController
      */
     public function store(): void
     {
+        if (!RateLimit::check('login', maxAttempts: 5, windowSeconds: 900)) {
+            $remaining = RateLimit::getRemainingTime('login');
+            $minutes = ceil($remaining / 60);
+            Flash::set('errors', ["Trop de tentatives de connexion. Réessayez dans {$minutes} minutes."]);
+            Http::redirect('/auth/login');
+            exit;
+        }
+
         Csrf::requireValid('/auth/login');
 
         $login    = trim((string) ($_POST['login'] ?? null));
@@ -81,6 +89,8 @@ final class SessionController
             }
 
             // Succès
+            RateLimit::reset('login');
+
             $this->userModel->maybeRehashPassword((int)$user['user_id'], $password, $hash);
             session_regenerate_id(true);
 

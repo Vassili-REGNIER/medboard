@@ -48,6 +48,14 @@ final class PasswordsController
 
     public function store()
     {
+        if (!RateLimit::check('forgot-password', maxAttempts: 10, windowSeconds: 900)) {
+            $remaining = RateLimit::getRemainingTime('forgot-password');
+            $minutes = ceil($remaining / 60);
+            Flash::set('errors', ["Trop de tentatives de soumission. Réessayez dans {$minutes} minutes."]);
+            Http::redirect('/auth/forgot-password');
+            exit;
+        }
+
         Auth::requireGuest();
         Csrf::requireValid('/auth/forgot-password', true);
 
@@ -70,7 +78,7 @@ final class PasswordsController
         }
 
         // 3) Recherche utilisateur (ne révèle jamais si l’email existe)
-        $user = $this->userModel->findByLogin($email); // à implémenter si absent : retourne array|false
+        $user = $this->userModel->findByLogin($email);
 
         // 4) Toujours répondre comme si tout s’était bien passé (anti-enum)
         $publicSuccessMsg = 'Si un compte existe pour cette adresse, un e-mail a été envoyé avec un lien de réinitialisation.';
@@ -80,6 +88,9 @@ final class PasswordsController
             Http::redirect('/auth/forgot-password');
             return;
         }
+
+        // Succès
+        RateLimit::reset('forgot-password');
 
         // 5) Génération du token + persistence
         $plainToken = rtrim(strtr(base64_encode(random_bytes(32)), '+/', '-_'), '='); // URL-safe
@@ -169,6 +180,14 @@ final class PasswordsController
 
     public function update()
     {
+        if (!RateLimit::check('reset-password', maxAttempts: 3, windowSeconds: 3600)) {
+            $remaining = RateLimit::getRemainingTime('reset-password');
+            $minutes = ceil($remaining / 60);
+            Flash::set('errors', ["Trop de tentatives de soumission. Réessayez dans {$minutes} minutes."]);
+            Http::redirect('/auth/reset-password');
+            exit;
+        }
+
         Auth::requireGuest();
         Csrf::requireValid('/auth/reset-password', true);
 
@@ -211,6 +230,9 @@ final class PasswordsController
             Http::redirect('/auth/reset-password?token='.urlencode($token).'&uid='.(int)$uid);
             return;
         }
+
+        // Succès
+        RateLimit::reset('reset-password');
 
         // 4) Hash du nouveau mot de passe
         $hash = password_hash($pwd, PASSWORD_ARGON2ID);

@@ -49,6 +49,14 @@ final class RegistrationController
 
     public function store(): void
     {
+        if (!RateLimit::check('register', maxAttempts: 10, windowSeconds: 3600)) {
+            $remaining = RateLimit::getRemainingTime('register');
+            $minutes = ceil($remaining / 60);
+            Flash::set('errors', ["Trop de tentatives de création de compte. Réessayez dans {$minutes} minutes."]);
+            Http::redirect('/auth/login');
+            exit;
+        }
+
         Csrf::requireValid('/auth/register', true);
 
         // 1) Inputs + normalisation via Inputs
@@ -66,7 +74,7 @@ final class RegistrationController
         $termsAccepted = isset($_POST['terms']) && $_POST['terms'] === 'on';
 
         // Flash old (versions normalisées, car c'est ce qui sera stocké en DB)
-        +Flash::set('old', [
+        Flash::set('old', [
             'firstname'      => $firstname,
             'lastname'       => $lastname,
             'username'       => $username,
@@ -135,13 +143,6 @@ final class RegistrationController
             return;
         }
 
-        // 4) Hash Argon2id + validation PHC
-        if (!defined('PASSWORD_ARGON2ID')) {
-            Flash::set('errors', ['Le serveur ne supporte pas Argon2id.']);
-            Http::redirect('/auth/register');
-            return;
-        }
-
         $hash = password_hash($password, PASSWORD_ARGON2ID);
         if ($hash === false || ($msg = Inputs::validateArgon2idPHC($hash))) {
             if ($hash === false) error_log('[Register] password_hash returned false');
@@ -149,8 +150,11 @@ final class RegistrationController
             Http::redirect('/auth/register');
             return;
         }
+        
+        // Succès
+        RateLimit::reset('register');
 
-        // 5) INSERT
+        // 4) INSERT
         try {
             $userId = $this->userModel->createUser([
                 'firstname'         => $firstname,
