@@ -156,6 +156,4 @@ final class SessionController
         Http::redirect('/auth/login');
         exit;
     }
-    
-
 }

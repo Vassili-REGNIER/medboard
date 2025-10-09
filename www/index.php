@@ -2,7 +2,42 @@
 // medboard/index.php — Front Controller
 declare(strict_types=1);
 
-session_start();
+session_name('MEDBOARD_SESSION');
+session_start([
+    'cookie_secure'    => true,
+    'cookie_httponly'  => true,
+    'cookie_samesite'  => 'Strict',
+    'use_strict_mode'  => true,
+    'use_only_cookies' => true,
+    'cookie_lifetime'  => 0,
+]);
+
+// ==================== POLITIQUE D'INACTIVITÉ & ROTATION ====================
+$now         = time();
+$idleTimeout = 1800; // 30 min
+
+if (isset($_SESSION['LAST_ACTIVITY']) && ($now - (int)$_SESSION['LAST_ACTIVITY'] >= $idleTimeout)) {
+    $_SESSION = [];
+    session_destroy();
+    session_start([
+        'cookie_secure'    => true,
+        'cookie_httponly'  => true,
+        'cookie_samesite'  => 'Strict',
+        'use_strict_mode'  => true,
+        'use_only_cookies' => true,
+        'cookie_lifetime'  => 0,
+    ]);
+    session_regenerate_id(true);
+    $_SESSION['flash']['info'] = 'Votre session a expiré.';
+}
+$_SESSION['LAST_ACTIVITY'] = $now;
+
+if (!isset($_SESSION['CREATED'])) {
+    $_SESSION['CREATED'] = $now;
+} elseif (($now - (int)$_SESSION['CREATED']) >= 900) { // 15 min
+    session_regenerate_id(true);
+    $_SESSION['CREATED'] = $now;
+}
 
 /**
  * Chargements : autoloader (connait déjà "modules\"),
