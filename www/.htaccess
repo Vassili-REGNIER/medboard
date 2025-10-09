@@ -19,40 +19,6 @@ Header always unset Server
 ServerSignature Off
 Options -Indexes
 
-# CORS pour images
-<IfModule mod_headers.c>
-    <FilesMatch "\\.(avif|bmp|cur|gif|ico|jpe?g|png|svg|webp)$">
-        <IfModule mod_setenvif.c>
-            SetEnvIf Origin ":" IS_CORS
-            Header set Access-Control-Allow-Origin "*" env=IS_CORS
-        </IfModule>
-    </FilesMatch>
-</IfModule>
-
-# Protection fichiers sensibles
-<FilesMatch "\\.(log|bak|backup|old|save|swp|tmp|sql|sh|conf|ini|env)$">
-    Require all denied
-</FilesMatch>
-
-# Protection fichiers de configuration
-<FilesMatch "^(composer\.(json|lock)|package(-lock)?\.json|\.env.*|yarn\.lock)$">
-    Require all denied
-</FilesMatch>
-
-# Exception pour robots.txt et humans.txt
-<FilesMatch "^(robots|humans)\.txt$">
-    Require all granted
-</FilesMatch>
-
-<Files .htaccess>
-    Require all denied
-</Files>
-
-# Bloquer accès dossier .git
-<DirectoryMatch "\.git">
-    Require all denied
-</DirectoryMatch>
-
 # Redirection 301 (permanente) de /site/home vers la racine
 RewriteCond %{REQUEST_URI} ^/site/home/?$
 RewriteRule ^site/home/?$ / [R=301,L]
@@ -70,35 +36,3 @@ RewriteRule ^(.+)$ index.php?route=$1 [L,QSA]
 
 # Optionnel : laisser la racine aller vers index.php sans param -> route par défaut "site/home"
 DirectoryIndex index.php
-
-# Compression GZIP
-<IfModule mod_deflate.c>
-    <IfModule mod_filter.c>
-        AddOutputFilterByType DEFLATE text/html text/css text/javascript
-        AddOutputFilterByType DEFLATE application/javascript application/json
-        AddOutputFilterByType DEFLATE text/xml application/xml
-        AddOutputFilterByType DEFLATE image/svg+xml
-    </IfModule>
-</IfModule>
-
-# Cache-Control Headers
-<IfModule mod_headers.c>
-    <FilesMatch "\\.(ico|jpe?g|png|webp|avif|gif|svg|ttf|woff2?)$">
-        Header set Cache-Control "max-age=2592000, public"
-    </FilesMatch>
-    <FilesMatch "\\.css$">
-        Header set Cache-Control "max-age=1592000, public"
-    </FilesMatch>
-    <FilesMatch "\\.js$">
-        Header set Cache-Control "max-age=1592000, public"
-    </FilesMatch>
-    <FilesMatch "\\.(html?|php)$">
-        Header set Cache-Control "no-cache, private, must-revalidate"
-    </FilesMatch>
-</IfModule>
-
-# Charset UTF-8
-AddDefaultCharset utf-8
-<IfModule mod_mime.c>
-    AddCharset utf-8 .css .js .json .xml .svg
-</IfModule>
