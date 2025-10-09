@@ -49,11 +49,6 @@
                         <div class="form-group">
                             <label for="email" class="form-label">Adresse email</label>
                             <input type="email" id="email" name="email" class="form-input" placeholder="votre.email@example.com" autocomplete="email" required maxlength="254" value="<?= htmlspecialchars((string)($old['email'] ?? ''), ENT_QUOTES, 'UTF-8') ?>">
-                            <?php if (!empty($errors['email'])): ?>
-                                <p class="err" role="alert" style="color:#c33; font-size:.925rem; margin:.25rem 0 0;">
-                                    <?= htmlspecialchars(is_array($errors['email']) ? implode(' ', $errors['email']) : $errors['email'], ENT_QUOTES, 'UTF-8') ?>
-                                </p>
-                            <?php endif; ?>
                         </div>
 
                         <button type="submit" class="btn-submit">Envoyer le lien</button>
