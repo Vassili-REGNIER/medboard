@@ -11,6 +11,7 @@ session_start([
     'use_only_cookies' => true,
     'cookie_lifetime'  => 0,
 ]);
+Auth::autoLoginFromRememberCookie();
 
 // ==================== POLITIQUE D'INACTIVITÉ & ROTATION ====================
 $now         = time();
@@ -49,6 +50,7 @@ require __DIR__ . '/../private/config/autoloader.php';
 require BASE_PATH . '/vendor/autoload.php';
 
 $routes = require __DIR__ . '/../private/config/routes.php';
+
 
 Csrf::ensureToken();
 

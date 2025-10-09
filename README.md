@@ -259,6 +259,23 @@ CREATE INDEX ix_password_resets_expires_at
 CREATE INDEX ix_password_resets_user_id
     ON public.password_resets (user_id);
 
+
+
+CREATE TABLE remember_tokens (
+    remember_token_id SERIAL PRIMARY KEY,
+    user_id           INTEGER NOT NULL REFERENCES users(user_id) ON DELETE CASCADE,
+    selector          VARCHAR(24) NOT NULL UNIQUE,
+    validator_hash    CHAR(64) NOT NULL,
+    user_agent_hash   CHAR(64) NOT NULL,
+    expires_at        TIMESTAMP WITH TIME ZONE NOT NULL,
+    created_at        TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW()
+);
+
+-- Index utile pour les vérifications de validité et le nettoyage
+CREATE INDEX idx_remember_tokens_expires_at ON remember_tokens (expires_at);
+CREATE INDEX idx_remember_tokens_user_id ON remember_tokens (user_id);
+
+
 ```
 
 ---
