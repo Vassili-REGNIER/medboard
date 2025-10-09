@@ -28,11 +28,11 @@ final class PasswordsController
     public function resetPassword() {
         if ($_SERVER['REQUEST_METHOD'] === 'POST')
         {   
-            return $this->update();
+            $this->update();
         }
         elseif ($_SERVER['REQUEST_METHOD'] === 'GET') 
         {
-            return $this->edit();
+            $this->edit();
         }
         else
         http_response_code(405);

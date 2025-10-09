@@ -29,7 +29,7 @@ final class SessionController
 
     public function logout() {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {   
-            return $this->destroy();
+            $this->destroy();
         } else {
             http_response_code(405);
             echo 'Méthode non autorisée.';
