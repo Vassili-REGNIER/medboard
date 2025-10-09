@@ -1,6 +1,10 @@
 # Active la réécriture d'URL
 RewriteEngine On
 
+# Force la redirection HTTP vers HTTPS
+RewriteCond %{HTTPS} off
+RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [R=301,L]
+
 # Redirection 301 (permanente) de /site/home vers la racine
 RewriteCond %{REQUEST_URI} ^/site/home/?$
 RewriteRule ^site/home/?$ / [R=301,L]
