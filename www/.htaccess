@@ -3,6 +3,7 @@ RewriteEngine On
 
 # Force la redirection HTTP vers HTTPS
 RewriteCond %{HTTPS} off
+RewriteCond %{HTTP:X-Forwarded-Proto} !https
 RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [R=301,L]
 
 # Redirection 301 (permanente) de /site/home vers la racine
