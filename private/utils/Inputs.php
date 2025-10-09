@@ -17,13 +17,13 @@ final class Inputs
     {
         // Remplace runs d'espaces (y compris tabs) par un simple espace
         // et supprime espaces en début/fin
-        $s = preg_replace('/\s+/u', ' ', $s ?? '');
+        $s = preg_replace('/\s+/u', ' ', $s);
         return trim($s);
     }
 
     public static function sanitizeString(string $s, bool $lower = false, bool $collapseSpaces = true): string 
     {
-        $s = trim($s ?? '');
+        $s = trim($s);
         if ($collapseSpaces) {
             $s = self::collapseSpaces($s);
         }
@@ -186,7 +186,7 @@ final class Inputs
     public static function sanitizeBase64UrlToken(string $s): string
     {
         // trim + suppression d'espaces invisibles
-        $s = trim($s ?? '');
+        $s = trim($s);
         // on retire les éventuels '=' de padding s'ils arrivent
         return rtrim($s, '=');
     }
