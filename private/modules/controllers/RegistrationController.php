@@ -53,7 +53,7 @@ final class RegistrationController
             $remaining = RateLimit::getRemainingTime('register');
             $minutes = ceil($remaining / 60);
             Flash::set('errors', ["Trop de tentatives de création de compte. Réessayez dans {$minutes} minutes."]);
-            Http::redirect('/auth/login');
+            Http::redirect('/auth/register');
             exit;
         }
 
