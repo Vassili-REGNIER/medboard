@@ -190,7 +190,8 @@ final class PasswordsController
             $errors['uid'] = $msg;
         }
         if ($msgs = Inputs::validatePasswordStrength($pwd)) {
-            $errors['password'] = $msgs;
+            // Convertir le tableau en une seule chaîne pour affichage
+            $errors['password'] = 'Le mot de passe doit contenir : ' . implode(', ', $msgs);
         }
         if ($msg = Inputs::validatePasswordConfirmation($pwd, $pwd2)) {
             $errors['password_confirm'] = $msg;
