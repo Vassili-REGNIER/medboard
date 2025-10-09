@@ -3,15 +3,12 @@ parameters:
   paths:
     - www
     - private
-  excludePaths:
-    - vendor
-    - cache
-    - logs
 
-services:
-  errorFormatter.sarif:
-    class: PHPStanSarifErrorFormatter\SarifErrorFormatter
-    arguments:
-      relativePathHelper: @simpleRelativePathHelper
-      currentWorkingDirectory: %currentWorkingDirectory%
-      pretty: true
+  excludePaths:
+    analyseAndScan:
+      - vendor
+      - 'cache (?)'
+      - 'logs (?)'
+      - 'var (?)'
+      - 'node_modules (?)'
+      - 'www/uploads (?)'
