@@ -1,8 +1,9 @@
 {
-    "require": {
-        "phpmailer/phpmailer": "^6.11"
-    },
-    "require-dev": {
-        "phpstan/phpstan": "^2.1"
-    }
+  "require": {
+    "phpmailer/phpmailer": "^6.11"
+  },
+  "require-dev": {
+    "phpstan/phpstan": "^2.1",
+    "jbelien/phpstan-sarif-formatter": "^1.0"
+  }
 }
