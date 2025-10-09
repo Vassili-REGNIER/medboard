@@ -1,36 +1,40 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
+    <!-- Encodage et viewport -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- SEO et indexation -->
     <meta name="description" content="MedBoard - Plateforme médicale nouvelle génération pour la gestion hospitalière intelligente">
 
-    <!-- Open Graph / Facebook -->
+    <!-- Métadonnées Open Graph / Facebook -->
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://medboard.alwaysdata.net/">
     <meta property="og:title" content="MedBoard - Plateforme médicale nouvelle génération">
     <meta property="og:description" content="MedBoard révolutionne la gestion hospitalière avec des outils intelligents, un monitoring en temps réel et une interface intuitive pensée pour les professionnels de santé.">
     <meta property="og:image" content="https://medboard.alwaysdata.net/_assets/images/LogoMedBoard.svg">
 
-    <!-- Twitter Card -->
+    <!-- Métadonnées Twitter Card -->
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:url" content="https://medboard.alwaysdata.net/">
     <meta name="twitter:title" content="MedBoard - Plateforme médicale nouvelle génération">
     <meta name="twitter:description" content="MedBoard révolutionne la gestion hospitalière avec des outils intelligents, un monitoring en temps réel et une interface intuitive pensée pour les professionnels de santé.">
     <meta name="twitter:image" content="https://medboard.alwaysdata.net/_assets/images/LogoMedBoard.svg">
 
-    <!-- Canonical URL -->
+    <!-- URL canonique -->
     <link rel="canonical" href="https://medboard.alwaysdata.net/">
 
     <title>MedBoard - Plateforme médicale nouvelle génération</title>
-    <!-- Favicon moderne (SVG) - prioritaire -->
+    
+    <!-- Favicons -->
     <link rel="icon" type="image/svg+xml" href="/_assets/images/favicon.svg">
-
-    <!-- Fallback pour navigateurs qui ne supportent pas SVG -->
     <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    
+    <!-- Styles -->
     <link rel="stylesheet" href="/_assets/css/styles.css">
 
-    <!-- Schema.org JSON-LD -->
+    <!-- Données structurées Schema.org pour le référencement -->
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
@@ -57,7 +61,9 @@
 <body class="light-theme">
     
     <?php 
-    // Header
+    /**
+     * Inclusion du header approprié selon le statut de connexion
+     */
     if (Auth::check()) {
         require __DIR__ ."/partials/header_user.php";
     } else {
@@ -66,8 +72,9 @@
     ?>
 
     <main>
-        <!-- Hero Section -->
+        <!-- Section Hero (bandeau principal) -->
         <section class="hero" aria-labelledby="hero-title">
+            <!-- Images de fond responsive avec différents formats -->
             <picture>
                 <source srcset="/_assets/images/banniere_light.avif" type="image/avif">
                 <source srcset="/_assets/images/banniere_light.webp" type="image/webp">
@@ -80,6 +87,7 @@
             </picture>
             <div class="hero-overlay" aria-hidden="true"></div>
 
+            <!-- Contenu principal du hero -->
             <div class="container">
                 <h1 id="hero-title" class="hero-title">
                     Plateforme médicale <span class="text-highlight">nouvelle génération</span>
@@ -87,6 +95,7 @@
                 <p class="hero-description">
                     MedBoard révolutionne la gestion hospitalière avec des outils intelligents, un monitoring en temps réel et une interface intuitive pensée pour les professionnels de santé.
                 </p>
+                <!-- Boutons d'action -->
                 <div class="hero-actions">
                     <a href="/auth/register" class="btn-primary">Créer un compte</a>
                     <a href="/auth/login" class="btn-secondary">Se connecter</a>
@@ -94,9 +103,10 @@
             </div>
         </section>
 
-        <!-- Features Section -->
+        <!-- Section des fonctionnalités -->
         <section class="features" aria-labelledby="features-title">
             <div class="container">
+                <!-- En-tête de section -->
                 <div class="section-header">
                     <h2 id="features-title" class="section-title">Une plateforme médicale complète</h2>
                     <p class="section-description">
@@ -104,7 +114,9 @@
                     </p>
                 </div>
 
+                <!-- Grille des fonctionnalités -->
                 <div class="features-grid">
+                    <!-- Fonctionnalité : Gestion des patients -->
                     <article class="feature-card">
                         <div class="feature-icon feature-icon-green" aria-hidden="true">
                             <img src="/_assets/images/features-1.svg" alt="">
@@ -115,6 +127,7 @@
                         </p>
                     </article>
 
+                    <!-- Fonctionnalité : Monitoring temps réel -->
                     <article class="feature-card">
                         <div class="feature-icon feature-icon-orange" aria-hidden="true">
                             <img src="/_assets/images/features-2.svg" alt="">
@@ -125,6 +138,7 @@
                         </p>
                     </article>
 
+                    <!-- Fonctionnalité : Sécurité renforcée -->
                     <article class="feature-card">
                         <div class="feature-icon feature-icon-red" aria-hidden="true">
                             <img src="/_assets/images/features-3.svg" alt="">
@@ -135,6 +149,7 @@
                         </p>
                     </article>
 
+                    <!-- Fonctionnalité : Planning intelligent -->
                     <article class="feature-card">
                         <div class="feature-icon feature-icon-blue" aria-hidden="true">
                             <img src="/_assets/images/features-4.svg" alt="">
@@ -145,6 +160,7 @@
                         </p>
                     </article>
 
+                    <!-- Fonctionnalité : Collaboration médicale -->
                     <article class="feature-card">
                         <div class="feature-icon feature-icon-cyan" aria-hidden="true">
                             <img src="/_assets/images/features-5.svg" alt="">
@@ -155,6 +171,7 @@
                         </p>
                     </article>
 
+                    <!-- Fonctionnalité : Analyses avancées -->
                     <article class="feature-card">
                         <div class="feature-icon feature-icon-orange" aria-hidden="true">
                             <img src="/_assets/images/features-6.svg" alt="">
@@ -168,15 +185,18 @@
             </div>
         </section>
 
-        <!-- FAQ Section -->
+        <!-- Section FAQ -->
         <section class="faq" aria-labelledby="faq-title">
             <div class="container-narrow">
+                <!-- En-tête de section -->
                 <div class="section-header">
                     <h2 id="faq-title" class="section-title">Questions fréquentes</h2>
                     <p class="section-description">Trouvez rapidement les réponses à vos questions</p>
                 </div>
 
+                <!-- Liste des questions/réponses -->
                 <div class="faq-list">
+                    <!-- Question 1 -->
                     <div class="faq-item">
                         <button class="faq-question" aria-expanded="false">
                             <span>Comment s'organise le développement de notre projet R3.01 ?</span>
@@ -187,6 +207,7 @@
                         </div>
                     </div>
 
+                    <!-- Question 2 -->
                     <div class="faq-item">
                         <button class="faq-question" aria-expanded="false">
                             <span>Où trouver les consignes officielles du rendu ?</span>
@@ -198,6 +219,7 @@
                         </div>
                     </div>
 
+                    <!-- Question 3 -->
                     <div class="faq-item">
                         <button class="faq-question" aria-expanded="false">
                             <span>Quelles technologies utilisons-nous pour ce projet ?</span>
@@ -208,6 +230,7 @@
                         </div>
                     </div>
 
+                    <!-- Question 4 -->
                     <div class="faq-item">
                         <button class="faq-question" aria-expanded="false">
                             <span>Comment gérez-vous la sécurité des données ?</span>
@@ -221,13 +244,14 @@
             </div>
         </section>
 
-        <!-- CTA Section -->
+        <!-- Section CTA (Call to Action) -->
         <section class="cta" aria-labelledby="cta-title">
             <div class="container">
                 <h2 id="cta-title" class="section-title">Prêt à commencer ?</h2>
                 <p class="section-description">
                     La plateforme médicale nouvelle génération qui révolutionne la gestion des soins de santé.
                 </p>
+                <!-- Boutons d'action -->
                 <div class="cta-actions">
                     <a href="/auth/register" class="btn-primary">Créer un compte</a>
                     <a href="/auth/login" class="btn-secondary">Se connecter</a>
@@ -237,10 +261,13 @@
     </main>
 
     <?php
-        // Footer
-        require __DIR__ ."/partials/footer.php";
+    /**
+     * Inclusion du footer
+     */
+    require __DIR__ ."/partials/footer.php";
     ?>
 
+    <!-- Scripts JavaScript -->
     <script src="/_assets/js/common.js" defer></script>
     <script src="/_assets/js/script.js" defer></script>
 </body>
