@@ -2,6 +2,17 @@
 // medboard/index.php — Front Controller
 declare(strict_types=1);
 
+/**
+ * Chargements : autoloader (connait déjà "modules\"),
+ * config générale (définit notamment MODULES_PATH),
+ * et table des routes.
+ */
+require __DIR__ . '/../private/config/config.php';
+require __DIR__ . '/../private/config/autoloader.php';
+require BASE_PATH . '/vendor/autoload.php';
+
+$routes = require __DIR__ . '/../private/config/routes.php';
+
 session_name('MEDBOARD_SESSION');
 session_start([
     'cookie_secure'    => true,
@@ -39,18 +50,6 @@ if (!isset($_SESSION['CREATED'])) {
     session_regenerate_id(true);
     $_SESSION['CREATED'] = $now;
 }
-
-/**
- * Chargements : autoloader (connait déjà "modules\"),
- * config générale (définit notamment MODULES_PATH),
- * et table des routes.
- */
-require __DIR__ . '/../private/config/config.php';
-require __DIR__ . '/../private/config/autoloader.php';
-require BASE_PATH . '/vendor/autoload.php';
-
-$routes = require __DIR__ . '/../private/config/routes.php';
-
 
 Csrf::ensureToken();
 
