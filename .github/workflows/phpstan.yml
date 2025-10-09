@@ -11,20 +11,43 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+        with: { fetch-depth: 1 }
 
       - uses: shivammathur/setup-php@v2
         with:
           php-version: '8.3'
           tools: composer
+          coverage: none
 
-      - name: Install dependencies
-        run: composer install --no-interaction --no-progress
+      - name: Composer install
+        run: composer install --no-interaction --no-progress --no-ansi
 
-      - name: Run PHPStan and upload report
+      # --- DIAGNOSTIC UTILE ---
+      - name: Show PHPStan & SARIF formatter
         run: |
-          vendor/bin/phpstan analyse --no-progress --error-format=sarif > phpstan.sarif || true
+          vendor/bin/phpstan --version || true
+          composer show jbelien/phpstan-sarif-formatter -N || true
+          ls -la
+
+      - name: Run PHPStan (produce SARIF)
+        continue-on-error: true
+        run: |
+          # Si tu as un phpstan.neon, précise-le :
+          if [ -f phpstan.neon ]; then CFG="-c phpstan.neon"; else CFG=""; fi
+          vendor/bin/phpstan analyse $CFG --error-format=sarif --no-progress --no-ansi www private > phpstan.sarif 2>phpstan.stderr || true
+          echo "----- phpstan.stderr -----"
+          sed -n '1,120p' phpstan.stderr || true
+          echo "----- end stderr -----"
+          echo "File size (bytes): $(wc -c < phpstan.sarif || echo 0)"
+
+      - name: Validate SARIF locally (quick check)
+        if: always()
+        run: |
+          test -s phpstan.sarif || (echo "Empty SARIF generated" && exit 1)
+          head -n 20 phpstan.sarif || true
 
       - name: Upload SARIF to GitHub
+        if: always()
         uses: github/codeql-action/upload-sarif@v3
         with:
           sarif_file: phpstan.sarif
