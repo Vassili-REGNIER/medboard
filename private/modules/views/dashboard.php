@@ -6,8 +6,11 @@
     <meta name="description" content="Accédez à votre tableau de bord MedBoard pour gérer vos patients, consultations et données médicales">
     <meta name="robots" content="noindex, nofollow">
     <title>Tableau de bord - MedBoard</title>
+    <!-- Favicon moderne (SVG) - prioritaire -->
     <link rel="icon" type="image/svg+xml" href="/_assets/images/favicon.svg">
-    <link rel="icon" type="image/x-icon" href="/_assets/images/favicon.ico">
+
+    <!-- Fallback pour navigateurs qui ne supportent pas SVG -->
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
     <link rel="stylesheet" href="/_assets/css/styles.css">
 </head>
 <body class="light-theme dashboard-page">

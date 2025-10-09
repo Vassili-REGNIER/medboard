@@ -23,8 +23,11 @@
     <link rel="canonical" href="https://medboard.alwaysdata.net/">
 
     <title>MedBoard - Plateforme médicale nouvelle génération</title>
+    <!-- Favicon moderne (SVG) - prioritaire -->
     <link rel="icon" type="image/svg+xml" href="/_assets/images/favicon.svg">
-    <link rel="icon" type="image/x-icon" href="/_assets/images/favicon.ico">
+
+    <!-- Fallback pour navigateurs qui ne supportent pas SVG -->
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
     <link rel="stylesheet" href="/_assets/css/styles.css">
 
     <!-- Schema.org JSON-LD -->

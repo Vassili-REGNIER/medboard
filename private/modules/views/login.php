@@ -6,8 +6,11 @@
     <meta name="description" content="Connectez-vous à votre compte MedBoard pour accéder à votre espace de gestion médicale">
     <meta name="robots" content="noindex, nofollow">
     <title>Connexion - MedBoard</title>
+    <!-- Favicon moderne (SVG) - prioritaire -->
     <link rel="icon" type="image/svg+xml" href="/_assets/images/favicon.svg">
-    <link rel="icon" type="image/x-icon" href="/_assets/images/favicon.ico">
+
+    <!-- Fallback pour navigateurs qui ne supportent pas SVG -->
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
     <link rel="stylesheet" href="/_assets/css/styles.css">
 </head>
 <body class="light-theme">

@@ -6,8 +6,11 @@
     <meta name="description" content="Créez un nouveau mot de passe sécurisé pour votre compte MedBoard">
     <meta name="robots" content="noindex, nofollow">
     <title>Nouveau mot de passe - MedBoard</title>
+    <!-- Favicon moderne (SVG) - prioritaire -->
     <link rel="icon" type="image/svg+xml" href="/_assets/images/favicon.svg">
-    <link rel="icon" type="image/x-icon" href="/_assets/images/favicon.ico">
+
+    <!-- Fallback pour navigateurs qui ne supportent pas SVG -->
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
     <link rel="stylesheet" href="/_assets/css/styles.css">
 </head>
 <body class="light-theme change-password-page">
