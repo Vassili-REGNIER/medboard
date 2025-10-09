@@ -36,3 +36,13 @@ RewriteRule ^(.+)$ index.php?route=$1 [L,QSA]
 
 # Optionnel : laisser la racine aller vers index.php sans param -> route par défaut "site/home"
 DirectoryIndex index.php
+
+# CORS pour images
+<IfModule mod_headers.c>
+    <FilesMatch "\\.(avif|bmp|cur|gif|ico|jpe?g|png|svg|webp)$">
+        <IfModule mod_setenvif.c>
+            SetEnvIf Origin ":" IS_CORS
+            Header set Access-Control-Allow-Origin "*" env=IS_CORS
+        </IfModule>
+    </FilesMatch>
+</IfModule>
