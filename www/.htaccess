@@ -49,7 +49,7 @@ Options -Indexes
 </Files>
 
 # Bloquer accès dossier .git
-<DirectoryMatch "^\.|/\.git">
+<DirectoryMatch "\.git">
     Require all denied
 </DirectoryMatch>
 
