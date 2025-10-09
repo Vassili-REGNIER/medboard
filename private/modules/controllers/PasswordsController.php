@@ -163,7 +163,7 @@ final class PasswordsController
             Flash::set('errors', $errors);
         }
 
-        [$old, $errs, $success] = array_values(Flash::consumeMany(['old','errors','success']));
+        [$old, $errors, $success] = array_values(Flash::consumeMany(['old','errors','success']));
         require dirname(__DIR__) . '/views/reset-password.php'; // La vue connait $token et $uid
     }
 
