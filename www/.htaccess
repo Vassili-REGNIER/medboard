@@ -1,6 +1,10 @@
 # Active la réécriture d'URL
 RewriteEngine On
 
+# Redirection 301 (permanente) de /site/home vers la racine
+RewriteCond %{REQUEST_URI} ^/site/home/?$
+RewriteRule ^site/home/?$ / [R=301,L]
+
 # Ne pas réécrire si le fichier/dossier existe déjà
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
