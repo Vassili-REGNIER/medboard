@@ -7,14 +7,16 @@
 !private/
 !private/**
 
-# Toujours versionner le .gitignore
-!.gitignore
-
 # --- Dossier GitHub Actions (pour CodeQL, lint, etc.) ---
 !.github/
 !.github/**
 
 # Autres fichiers à versionner
+!.gitignore
 !README.md
 !composer.json
 !phpstan.neon
+
+# --- Exclure la documentation générée par PHPDocumentor ---
+docs/
+.phpdoc-cache/
