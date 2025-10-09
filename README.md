@@ -133,161 +133,154 @@ SMTP_FROM_NAME
 > (Script conforme à PostgreSQL)
 
 ```sql
+
+DROP TABLE IF EXISTS users CASCADE;
+DROP TABLE IF EXISTS specializations CASCADE;
+DROP TABLE IF EXISTS password_resets CASCADE;
+DROP TABLE IF EXISTS remember_tokens CASCADE;
+
 CREATE TABLE specializations (
-    specialization_id INT GENERATED ALWAYS AS IDENTITY,
-    name_en           VARCHAR(64) NOT NULL UNIQUE,
+	specialization_id		INT 			GENERATED ALWAYS AS IDENTITY,
+	name_fr					VARCHAR(32)		NOT NULL,
 
-    CONSTRAINT pk_specializations PRIMARY KEY (specialization_id),
-    CONSTRAINT ck_name_en_not_blank CHECK (btrim(name_en) <> ''),
-    CONSTRAINT ck_name_en_trim      CHECK (name_en = btrim(name_en)),
-    -- tout en minuscules
-    CONSTRAINT ck_name_en_lower     CHECK (name_en = lower(name_en)),
-    -- caractères autorisés
-    CONSTRAINT ck_name_en_chars     CHECK (name_en ~ '^[a-zà-öø-ÿ'' _-]+$')
+	CONSTRAINT pk_specializations PRIMARY KEY (specialization_id),
+
+	CONSTRAINT unique_name_fr UNIQUE (name_fr),
+	
+	CONSTRAINT ck_name_fr CHECK (
+    	name_fr ~ '^[a-zà-öø-ÿ]+([\s-][a-zà-öø-ÿ]+)*$'
+		AND length(name_fr) >= 3
+	)
 );
-
-INSERT INTO specializations (name_en) VALUES
-    ('cardiology'),
-    ('general_practice'),
-    ('dermatology'),
-    ('neurology'),
-    ('psychiatry'),
-    ('pediatrics'),
-    ('endocrinology'),
-    ('oncology'),
-    ('orthopedics'),
-    ('radiology'),
-    ('urology'),
-    ('gastroenterology');
 
 CREATE TABLE users (
-    user_id           INT GENERATED ALWAYS AS IDENTITY,
-    firstname         VARCHAR(32)  NOT NULL,
-    lastname          VARCHAR(32)  NOT NULL,
-    username          VARCHAR(32)  NOT NULL,
-    password_hash     VARCHAR(255) NOT NULL,
-    email             VARCHAR(254) NOT NULL,
-    specialization_id INT REFERENCES specializations(specialization_id) ON DELETE SET NULL,
+    user_id                	INT           GENERATED ALWAYS AS IDENTITY,
+    firstname           	VARCHAR(32)   NOT NULL,
+    lastname            	VARCHAR(32)   NOT NULL,
+    username           		VARCHAR(32)   NOT NULL,
+	email                	VARCHAR(254)  NOT NULL,
+    password_hash        	VARCHAR(255)  NOT NULL,
+    specialization_id       INT,
+    created_at 				TIMESTAMP   NOT NULL DEFAULT now(),
+    updated_at 				TIMESTAMP   NOT NULL DEFAULT now(),
 
-    -- Identité & unicité
-    CONSTRAINT pk_user     PRIMARY KEY (user_id),
-    CONSTRAINT uq_username UNIQUE (username),
-    CONSTRAINT uq_email    UNIQUE (email),
+    CONSTRAINT pk_user PRIMARY KEY (user_id),
 
-    -- Qualité de données : trim + non vide + minuscules
-    CONSTRAINT ck_firstname_not_blank CHECK (btrim(firstname) <> ''),
-    CONSTRAINT ck_lastname_not_blank  CHECK (btrim(lastname)  <> ''),
-    CONSTRAINT ck_firstname_trim      CHECK (firstname = btrim(firstname)),
-    CONSTRAINT ck_lastname_trim       CHECK (lastname  = btrim(lastname)),
-    CONSTRAINT ck_username_trim       CHECK (username  = btrim(username)),
-    CONSTRAINT ck_email_trim          CHECK (email     = btrim(email)),
-
-    -- minuscules obligatoires
-    CONSTRAINT ck_firstname_lower CHECK (firstname = lower(firstname)),
-    CONSTRAINT ck_lastname_lower  CHECK (lastname  = lower(lastname)),
-    CONSTRAINT ck_username_lower  CHECK (username  = lower(username)),
-    CONSTRAINT ck_email_lower     CHECK (email     = lower(email)),
-
-    -- jeux de caractères autorisés (acceptent accents, espaces/tirets pour noms)
-    CONSTRAINT ck_firstname_chars CHECK (firstname ~ '^[a-zà-öø-ÿ'' -]+$'),
-    CONSTRAINT ck_lastname_chars  CHECK (lastname  ~ '^[a-zà-öø-ÿ'' -]+$'),
-
-    -- Username : 3–32, commence par une lettre, autorise lettres/chiffres/._-
-    CONSTRAINT ck_username_len   CHECK (length(username) BETWEEN 3 AND 32),
-    CONSTRAINT ck_username_chars CHECK (username ~ '^[a-z][a-z0-9_.-]*$'),
-
-    -- Email : format raisonnable
-    CONSTRAINT ck_email_format CHECK (
-        email ~ '^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$'
+	CONSTRAINT fk_specializations_users FOREIGN KEY (specialization_id) 
+	REFERENCES specializations(specialization_id)
+	ON DELETE SET NULL,
+	
+    CONSTRAINT unique_username  UNIQUE (username),
+	
+    CONSTRAINT unique_email UNIQUE (email),
+    
+    CONSTRAINT ck_firstname CHECK (
+        firstname  ~ '^[a-zà-öø-ÿ]+([\s-][a-zà-öø-ÿ]+)*$'
+		AND length(firstname) >= 2
     ),
 
-    -- Hash Argon2id (format PHC)
-    CONSTRAINT ck_password_hash_format CHECK (
-        password_hash ~ '^\$argon2id\$v=\d+\$m=\d+,t=\d+,p=\d+\$[A-Za-z0-9+/=]+\$[A-Za-z0-9+/=]+$'
+    CONSTRAINT ck_lastname CHECK (
+        lastname ~ '^[a-zà-öø-ÿ]+([\s-][a-zà-öø-ÿ]+)*$'
+		AND length(lastname) >= 1
     ),
 
-    -- Traçabilité
-    created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
-    updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
+	CONSTRAINT ck_username CHECK (
+        username ~ '^[a-z][a-z0-9]*([._-][a-z0-9]+)*$'
+		AND length(username) >= 3
+    ),
+    
+    CONSTRAINT ck_email CHECK (
+        email ~ '^[a-z0-9]+([._+-][a-z0-9]+)*@[a-z0-9]+([.-][a-z0-9]+)*\.[a-z]{2,}$'
+    ),
+    
+	CONSTRAINT ck_argon2id CHECK (
+          password_hash ~ '^\$argon2id\$v=\d+\$m=\d+,t=\d+,p=\d+\$[A-Za-z0-9+/=]+\$[A-Za-z0-9+/=]+$'
+    )
+	
 );
 
--- 3) Trigger de normalisation (lower + trim) et mise à jour updated_at
+CREATE TABLE password_resets (
+	password_reset_id		INT			  GENERATED ALWAYS AS IDENTITY,
+	user_id					INT			  NOT NULL,
+	token_hash				CHAR(64)	  NOT NULL UNIQUE,
+	expires_at				TIMESTAMP	  NOT NULL,
+	used_at				TIMESTAMP,
+	created_at				TIMESTAMP	  DEFAULT now() NOT NULL,
+
+	CONSTRAINT pk_password_resets PRIMARY KEY (password_reset_id),
+
+	CONSTRAINT fk_password_resets_users FOREIGN KEY (user_id)
+	REFERENCES users(user_id)
+	ON DELETE CASCADE,
+
+	CONSTRAINT ck_token_hash CHECK (
+    	token_hash ~ '^[a-f0-9]{64}$'
+    )
+);
+
+CREATE TABLE remember_tokens (
+	remember_token_id		INT		    GENERATED ALWAYS AS IDENTITY,
+	user_id					INT			NOT NULL,
+	selector				VARCHAR(24) NOT NULL UNIQUE,
+	validator_hash			CHAR(64)	NOT NULL,
+	user_agent_hash			CHAR(64)	NOT NULL,
+	expires_at				TIMESTAMP	NOT NULL,
+	created_at				TIMESTAMP	DEFAULT now() NOT NULL,
+
+	CONSTRAINT pk_remember_tokens PRIMARY KEY (remember_token_id),
+
+	CONSTRAINT fk_remember_tokens_users FOREIGN KEY (user_id)
+	REFERENCES users(user_id)
+	ON DELETE CASCADE,
+
+	CONSTRAINT ck_selector CHECK (
+		selector ~ '^[A-Za-z0-9_-]+$'
+	),
+
+	CONSTRAINT ck_validator_hash CHECK (
+		validator_hash ~ '^[a-f0-9]{64}$'
+	),
+
+	CONSTRAINT ck_user_agent_hash CHECK (
+		user_agent_hash ~ '^[a-f0-9]{64}$'
+	)
+);
+
+
 CREATE OR REPLACE FUNCTION users_normalize_and_touch()
-RETURNS trigger LANGUAGE plpgsql AS $fn$
+RETURNS TRIGGER AS $$
 BEGIN
-  -- normalisation en minuscules + trim
-  NEW.firstname := lower(btrim(NEW.firstname));
-  NEW.lastname  := lower(btrim(NEW.lastname));
+  NEW.firstname := lower(NEW.firstname);
+  NEW.lastname  := lower(NEW.lastname);
   NEW.username  := lower(btrim(NEW.username));
   NEW.email     := lower(btrim(NEW.email));
-  -- updated_at pour INSERT/UPDATE
+
   NEW.updated_at := now();
   RETURN NEW;
 END;
-$fn$;
+$$ LANGUAGE plpgsql;
 
-DROP TRIGGER IF EXISTS trg_users_norm ON users;
-CREATE TRIGGER trg_users_norm
+CREATE OR REPLACE TRIGGER trg_users
 BEFORE INSERT OR UPDATE ON users
 FOR EACH ROW
 EXECUTE FUNCTION users_normalize_and_touch();
 
--- 4) Trigger pour normaliser la table specializations (lower + trim)
 CREATE OR REPLACE FUNCTION specializations_normalize()
-RETURNS trigger LANGUAGE plpgsql AS $fs$
+RETURNS TRIGGER AS $$
 BEGIN
-  NEW.name_en := lower(btrim(NEW.name_en));
+  NEW.name_fr := lower(NEW.name_fr);
   RETURN NEW;
 END;
-$fs$;
+$$ LANGUAGE plpgsql;
 
-DROP TRIGGER IF EXISTS trg_specializations_norm ON specializations;
-CREATE TRIGGER trg_specializations_norm
+CREATE OR REPLACE TRIGGER trg_specializations
 BEFORE INSERT OR UPDATE ON specializations
 FOR EACH ROW
 EXECUTE FUNCTION specializations_normalize();
 
--- Table pour gérer les demandes de réinitialisation de mot de passe
-CREATE TABLE public.password_resets (
-    id          BIGSERIAL PRIMARY KEY,
-    user_id     INT NOT NULL,
-    token_hash  CHAR(64) NOT NULL,               -- hash SHA-256 hex (64 chars)
-    expires_at  TIMESTAMPTZ NOT NULL,            -- avec fuseau horaire
-    used_at     TIMESTAMPTZ NULL,
-    created_at  TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-
-    CONSTRAINT fk_password_resets_user
-        FOREIGN KEY (user_id) REFERENCES public.users(user_id)
-        ON DELETE CASCADE
-);
-
--- Un même token_hash ne doit exister qu’une seule fois
-CREATE UNIQUE INDEX ux_password_resets_token_hash
-    ON public.password_resets (token_hash);
-
--- Index utiles pour les vérifs / purges
-CREATE INDEX ix_password_resets_expires_at
-    ON public.password_resets (expires_at);
-
-CREATE INDEX ix_password_resets_user_id
-    ON public.password_resets (user_id);
-
-
-
-CREATE TABLE remember_tokens (
-    remember_token_id SERIAL PRIMARY KEY,
-    user_id           INTEGER NOT NULL REFERENCES users(user_id) ON DELETE CASCADE,
-    selector          VARCHAR(24) NOT NULL UNIQUE,
-    validator_hash    CHAR(64) NOT NULL,
-    user_agent_hash   CHAR(64) NOT NULL,
-    expires_at        TIMESTAMP WITH TIME ZONE NOT NULL,
-    created_at        TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW()
-);
-
--- Index utile pour les vérifications de validité et le nettoyage
-CREATE INDEX idx_remember_tokens_expires_at ON remember_tokens (expires_at);
-CREATE INDEX idx_remember_tokens_user_id ON remember_tokens (user_id);
-
+CREATE INDEX idx_users_specialization_id ON users(specialization_id);
+CREATE INDEX idx_password_resets_user_id ON password_resets(user_id);
+CREATE INDEX idx_remember_tokens_user_id ON remember_tokens(user_id);
 
 ```
 

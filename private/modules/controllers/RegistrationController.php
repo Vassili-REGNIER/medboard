@@ -224,7 +224,7 @@ final class RegistrationController
          */
         try {
             $existsErr = [];
-            if ($this->userModel->isUsernameTaken($username)) $existsErr[] = 'Ce nom d'utilisateur est déjà utilisé.';
+            if ($this->userModel->isUsernameTaken($username)) $existsErr[] = 'Ce nom d\'utilisateur est déjà utilisé.';
             if ($this->userModel->isEmailTaken($email)) $existsErr[] = 'Cet email est déjà utilisé.';
             if ($existsErr) {
                 Flash::set('errors', $existsErr);
@@ -277,8 +277,8 @@ final class RegistrationController
             // Gestion des erreurs de contrainte d'unicité PostgreSQL
             if ($e->getCode() === '23505') {
                 $msg = $e->getMessage();
-                $human = 'Ce nom d'utilisateur ou cet email est déjà utilisé.';
-                if (stripos($msg, 'username') !== false) $human = 'Ce nom d'utilisateur est déjà utilisé.';
+                $human = 'Ce nom d\'utilisateur ou cet email est déjà utilisé.';
+                if (stripos($msg, 'username') !== false) $human = 'Ce nom d\'utilisateur est déjà utilisé.';
                 if (stripos($msg, 'email') !== false) $human = 'Cet email est déjà utilisé.';
                 Flash::set('errors', [$human]);
                 Http::redirect('/auth/register');
