@@ -1,3 +1,8 @@
+<?php
+/** @var string $firstname */
+/** @var string $lastname */
+/** @var string $specialization */
+?>
 <!DOCTYPE html>
 <html lang="fr">
 <head>

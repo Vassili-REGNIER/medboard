@@ -1,3 +1,9 @@
+<?php
+/** @var array $specializations */
+/** @var array $old */
+/** @var array $errors */
+/** @var null|string $success */
+?>
 <!DOCTYPE html>
 <html lang="fr">
 <head>

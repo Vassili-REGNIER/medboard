@@ -30,6 +30,12 @@ final class RegistrationController
     {
         Auth::requireGuest();
 
+        // Valeurs par défaut pour rassurer PHPStan
+        $old = [];
+        $errors = [];
+        $success = null;
+        $specializations = [];
+
         // Consomme les flashs
         [$old, $errors, $success] = array_values(Flash::consumeMany(['old','errors','success']));
 
