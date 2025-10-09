@@ -8,7 +8,17 @@ Vassili Régnier — Jérémy Watripont — Alexis Barberis
 ---
 a rajouter :  
 utilisation de github issues  
-implémentation de gitHub codeQL 
+implémentation de PHP stan avec comme fichier de config phpstan.neon placé à la racine : 
+parameters:
+  paths:
+    - www
+    - private
+  level: 1
+  excludePaths:
+    - vendor
+    - cache
+    - logs
+
 
 ## 🧩 Description
 
