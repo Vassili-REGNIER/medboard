@@ -10,5 +10,9 @@
 # Toujours versionner le .gitignore
 !.gitignore
 
+# --- Dossier GitHub Actions (pour CodeQL, lint, etc.) ---
+!.github/
+!.github/**
+
 # Autres fichiers à versionner
 !README.md

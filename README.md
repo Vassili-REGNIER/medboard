@@ -6,6 +6,9 @@
 Vassili Régnier — Jérémy Watripont — Alexis Barberis  
 
 ---
+a rajouter :  
+utilisation de github issues  
+utilisation de php Linter
 
 ## 🧩 Description
 
