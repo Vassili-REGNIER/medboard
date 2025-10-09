@@ -111,7 +111,7 @@ try {
         $e->getMessage(),
         $e->getFile(),
         $e->getLine(),
-        $route ?? '(inconnue)',
+        $route,
         $class ?? '(inconnue)',
         $method ?? '(inconnue)',
         $e->getTraceAsString()

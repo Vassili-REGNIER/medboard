@@ -13,16 +13,16 @@ final class RegistrationController
     public function register() {
         if ($_SERVER['REQUEST_METHOD'] === 'POST')
         {   
-            return $this->store();
+            $this->store();
         }
         elseif ($_SERVER['REQUEST_METHOD'] === 'GET') 
         {
-            return $this->create();
+            $this->create();
         }
         else
         {
             http_response_code(405);
-            return ['Méthode non autorisée.'];
+            echo 'Méthode non autorisée.';
         }
     }
 
