@@ -17,3 +17,4 @@
 # Autres fichiers à versionner
 !README.md
 !composer.json
+!phpstan.neon

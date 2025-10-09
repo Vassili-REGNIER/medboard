@@ -1,0 +1,17 @@
+parameters:
+  level: 1
+  paths:
+    - www
+    - private
+  excludePaths:
+    - vendor
+    - cache
+    - logs
+
+services:
+  errorFormatter.sarif:
+    class: PHPStanSarifErrorFormatter\SarifErrorFormatter
+    arguments:
+      relativePathHelper: @simpleRelativePathHelper
+      currentWorkingDirectory: %currentWorkingDirectory%
+      pretty: true
