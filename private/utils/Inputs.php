@@ -126,6 +126,49 @@ final class Inputs
         return null;
     }
 
+    /**
+     * Valide qu'un mot de passe respecte les critères de sécurité :
+     * - Au moins 8 caractères
+     * - Une lettre majuscule
+     * - Une lettre minuscule
+     * - Un chiffre
+     * - Un caractère spécial
+     *
+     * @param string $plain Le mot de passe en clair
+     * @return array|null Tableau de messages d'erreur ou null si valide
+     */
+    public static function validatePasswordStrength(string $plain): ?array
+    {
+        $errors = [];
+
+        // Au moins 8 caractères
+        if (strlen($plain) < 8) {
+            $errors[] = "Au moins 8 caractères";
+        }
+
+        // Au moins une lettre majuscule
+        if (!preg_match('/[A-Z]/', $plain)) {
+            $errors[] = "Une lettre majuscule";
+        }
+
+        // Au moins une lettre minuscule
+        if (!preg_match('/[a-z]/', $plain)) {
+            $errors[] = "Une lettre minuscule";
+        }
+
+        // Au moins un chiffre
+        if (!preg_match('/[0-9]/', $plain)) {
+            $errors[] = "Un chiffre";
+        }
+
+        // Au moins un caractère spécial
+        if (!preg_match('/[^A-Za-z0-9]/', $plain)) {
+            $errors[] = "Un caractère spécial";
+        }
+
+        return empty($errors) ? null : $errors;
+    }
+
     public static function validatePasswordConfirmation(string $plain, string $confirm): ?string
     {
         if (!hash_equals($plain, $confirm)) return "Les mots de passe ne correspondent pas.";

@@ -189,8 +189,8 @@ final class PasswordsController
         if ($msg = Inputs::validateIntId($uid, 'Utilisateur')) {
             $errors['uid'] = $msg;
         }
-        if ($msg = Inputs::validatePasswordMinBytes($pwd, 8)) {
-            $errors['password'] = $msg;
+        if ($msgs = Inputs::validatePasswordStrength($pwd)) {
+            $errors['password'] = $msgs;
         }
         if ($msg = Inputs::validatePasswordConfirmation($pwd, $pwd2)) {
             $errors['password_confirm'] = $msg;

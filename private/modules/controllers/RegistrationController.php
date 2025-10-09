@@ -105,7 +105,11 @@ final class RegistrationController
         }
 
         // Mot de passe
-        if ($msg = Inputs::validatePasswordMinBytes($password, 8))          $errors[] = $msg;
+        if ($msgs = Inputs::validatePasswordStrength($password)) {
+            foreach ($msgs as $msg) {
+                $errors[] = $msg;
+            }
+        }
         if ($msg = Inputs::validatePasswordConfirmation($password, $password2)) $errors[] = $msg;
 
         if ($errors) {
