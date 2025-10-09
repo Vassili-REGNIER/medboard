@@ -18,5 +18,4 @@
 !phpstan.neon
 
 # --- Exclure la documentation générée par PHPDocumentor ---
-docs/
-.phpdoc-cache/
+!docs/
