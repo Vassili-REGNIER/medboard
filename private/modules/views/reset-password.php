@@ -63,11 +63,6 @@
                                     <img src="/_assets/images/oeil-dark.svg" alt="" class="eye-dark">
                                 </button>
                             </div>
-                            <?php if (!empty($errors['password'])): ?>
-                                <p class="err" role="alert" style="color:#c33; font-size:.925rem; margin:.25rem 0 0;">
-                                    <?= htmlspecialchars(is_array($errors['password']) ? implode(' ', $errors['password']) : $errors['password'], ENT_QUOTES, 'UTF-8') ?>
-                                </p>
-                            <?php endif; ?>
                         </div>
 
                         <div class="form-group">
@@ -88,11 +83,6 @@
                                     <img src="/_assets/images/oeil-dark.svg" alt="" class="eye-dark">
                                 </button>
                             </div>
-                            <?php if (!empty($errors['password_confirm'])): ?>
-                                <p class="err" role="alert" style="color:#c33; font-size:.925rem; margin:.25rem 0 0;">
-                                    <?= htmlspecialchars(is_array($errors['password_confirm']) ? implode(' ', $errors['password_confirm']) : $errors['password_confirm'], ENT_QUOTES, 'UTF-8') ?>
-                                </p>
-                            <?php endif; ?>
                         </div>
 
                         <button type="submit" class="btn-submit" id="submitBtn">
