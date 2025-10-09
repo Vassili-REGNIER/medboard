@@ -32,6 +32,23 @@ final class UserModel
     }
 
     /**
+     * Récupère un utilisateur par son ID.
+     * Retourne: ['user_id','firstname','lastname','username','password_hash','email','specialization_id'] ou null
+     */
+    public function findById(int $userId): ?array
+    {
+        $sql = "SELECT user_id, firstname, lastname, username, password_hash, email, specialization_id
+                FROM users
+                WHERE user_id = :id
+                LIMIT 1";
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute([':id' => $userId]);
+        $user = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        return $user ?: null;
+    }
+
+    /**
      * Récupère un utilisateur à partir d'un login (email OU username).
      * Retourne: ['user_id','firstname','lastname','username','password_hash','email','specialization_id'] ou null
      */
