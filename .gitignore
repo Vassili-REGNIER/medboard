@@ -17,5 +17,6 @@
 !composer.json
 !phpstan.neon
 
-# --- Exclure la documentation générée par PHPDocumentor ---
+# --- Autoriser le dossier mon_dossier et tout son contenu ---
 !docs/
+!docs/**
